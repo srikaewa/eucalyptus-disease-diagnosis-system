@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "656240531952",
+    "firebase_url": "https://eucalyptus-diagnosis-system.firebaseio.com",
+    "project_id": "eucalyptus-diagnosis-system",
+    "storage_bucket": "eucalyptus-diagnosis-system.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656240531952:android:1b0fe7180547aeb0",
+        "android_client_info": {
+          "package_name": "ai.suntrust.edds"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "656240531952-8tl2t0lerttfm4ofe3a1h4okobd209u6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmH0F7gU1CPUuUo-cfoEB0GKt4p3UP_hw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
