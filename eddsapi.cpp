@@ -101,7 +101,7 @@ void EDDSApi::setFileNameFromGallery(const QString &fileNameFromGallery)
     }
 }
 
-int EDDSApi::sendImageFile(QString file_path)
+int EDDSApi::sendImageFile(QString file_path, QString serverIP)
 {
     qDebug() << "Calling sendImageFile(" + file_path + ")...";
     QString bound="----7MA4YWxkTrZu0gW";
@@ -128,7 +128,8 @@ int EDDSApi::sendImageFile(QString file_path)
     //qDebug() << "CheckCheck!!!!!!!!!!!!!! => " + bb;
     QString buff = "multipart/form-data; boundary=" + bound;
     QNetworkAccessManager *am = new QNetworkAccessManager(this);
-    QNetworkRequest request(QUrl("http://192.168.0.21:3009/api/photo"));
+    qDebug() << "File server IP : http://" + serverIP + ":3009/api/photo";
+    QNetworkRequest request(QUrl("http://" + serverIP + ":3009/api/photo"));
     //QNetworkRequest request(QUrl("http://172.31.171.16:3009/api/photo"));
     request.setRawHeader("Content-Type", buff.toStdString().c_str());
     request.setHeader(QNetworkRequest::ContentLengthHeader,data.length());
@@ -138,25 +139,6 @@ int EDDSApi::sendImageFile(QString file_path)
     QNetworkReply *reply = am->post(request, data); // perform POST request
     loop.exec();
     return 0;
-
-/*    QByteArray postData;
-    //Look below for buildUploadString() function
-    postData = buildUploadString(file_path);
-
-    QUrl mResultsURL = QUrl("http://localhost:3000/api/photo");
-    QNetworkAccessManager* mNetworkManager = new QNetworkAccessManager(this);
-
-    QString bound="7MA4YWxkTrZu0gW"; //name of the boundary
-
-    QNetworkRequest request(mResultsURL); //our server with php-script
-    QString buff = "multipart/form-data; boundary=" + bound;
-    qDebug() << buff;
-    request.setRawHeader("Content-Type", buff.toStdString().c_str());
-    request.setRawHeader("Content-Length", QString::number(postData.length()).toStdString().c_str());
-
-
-    connect(mNetworkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(printScriptReply(QNetworkReply*))); //This slot is used to debug the output of the server script
-    mNetworkManager->post(request,postData);*/
 }
 
 void EDDSApi::sendFileReply(QNetworkReply* nr)
@@ -406,35 +388,6 @@ QByteArray EDDSApi::readImageFile(QString file_path)
     return blob;
 }
 
-/*
-int EDDSApi::sendImageFile(QString file_path)
-{
-    QUrl url("http://localhost:3000/api/photo");
-    QNetworkRequest request(url);
-    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
-    //ui->progUpload->setRange(0,100);
-    QFile file(file_path);
-    QString file_name = file_path.section("/",-1,-1);
-    QHttpPart filePart;
-    filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"userPhoto\"; filename=\""+ file_name + "\""));
-
-    file.open(QIODevice::ReadOnly);
-    filePart.setBodyDevice(&file);
-    file.setParent(multiPart); // we cannot delete the file now, so delete it with the multiPart
-    multiPart->append(filePart);
-
-    while (isUploading) {
-        ui->lblStatus->setText("Waiting for response from server");
-        QTest::qWait(1000);
-    }
-    QNetworkAccessManager *networkManager = new QNetworkAccessManager(this);
-    QNetworkReply* reply = networkManager->post(request, multiPart);
-    //multiPart->setParent(reply); // delete the multiPart with the reply
-    //connect(reply, SIGNAL(finished()), this, SLOT(onGetReplyUpload()));
-    //connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onNetworkError(QNetworkReply::NetworkError)));
-    //connect(reply, SIGNAL(uploadProgress(qint64, qint64)), SLOT(progressChanged(qint64, qint64)));
-} */
-
 QString EDDSApi::getDefaultImagePath()
 {
     return QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
@@ -646,13 +599,17 @@ bool EDDSApi::updateEucaImageId(QString imageId, QString filename)
     }
 }
 
-bool EDDSApi::updateDiseaseType(QString imageId, QString diseasetype)
+bool EDDSApi::updateDiseaseType(QString imageId, QString diseasetype, QString stage, QString level, QString lastedit, QString elapsetime)
 {
     qDebug()  << "EDDSApi:: updating disease type of [" + imageId + ": " + diseasetype + "] to database...";
     QSqlQuery qry;
-    if(qry.prepare("UPDATE euca_images SET diseasetype = :diseasetype WHERE imageId = :imageId")){
+    if(qry.prepare("UPDATE euca_images SET diseasetype = :diseasetype, stage = :stage, level = :level, lastedit = :lastedit, elapsetime = :elapsetime WHERE imageId = :imageId")){
         qry.bindValue(":imageId", imageId);
         qry.bindValue(":diseasetype", diseasetype);
+        qry.bindValue(":stage", stage);
+        qry.bindValue(":level", level);
+        qry.bindValue(":lastedit", lastedit);
+        qry.bindValue(":elapsetime", elapsetime);
         if(qry.exec())
         {
             qDebug() << "EDDSApi:: update diseasetype successfully...";
@@ -671,13 +628,16 @@ bool EDDSApi::updateDiseaseType(QString imageId, QString diseasetype)
     }
 }
 
-bool EDDSApi::updateDiseaseType2Filename(QString filename, QString diseasetype)
+bool EDDSApi::updateDiseaseType2Filename(QString filename, QString diseasetype, QString stage, QString level, QString elapsetime)
 {
     qDebug()  << "EDDSApi:: updating disease type of [" + filename + ": " + diseasetype + "] to database...";
     QSqlQuery qry;
-    if(qry.prepare("UPDATE euca_images SET diseasetype = :diseasetype WHERE filename = :filename")){
+    if(qry.prepare("UPDATE euca_images SET diseasetype = :diseasetype, stage = :stage, level = :level, elapsetime = :elapsetime WHERE filename = :filename")){
         qry.bindValue(":filename", filename);
         qry.bindValue(":diseasetype", diseasetype);
+        qry.bindValue(":stage", stage);
+        qry.bindValue(":level", level);
+        qry.bindValue(":elapsetime", elapsetime);
         if(qry.exec())
         {
             qDebug() << "EDDSApi:: update diseasetype successfully...";
@@ -787,6 +747,8 @@ QString EDDSApi::readEucaImage(QString type)
                 //qDebug() << "filename: " + eucaTemp.value(1);
                 recordObject.insert("diseasetype", qry.value(qry.record().indexOf("diseasetype")).toString());
                 //qDebug() << "diseasetype: " + eucaTemp.value(2);
+                recordObject.insert("stage", qry.value(qry.record().indexOf("stage")).toString());
+                recordObject.insert("level", qry.value(qry.record().indexOf("level")).toString());
                 recordObject.insert("submitter", qry.value(qry.record().indexOf("submitter")).toString());
                 //qDebug() << "submitter: " + eucaTemp.value(3);
                 recordObject.insert("submit", qry.value(qry.record().indexOf("submit")).toString());
@@ -794,6 +756,7 @@ QString EDDSApi::readEucaImage(QString type)
                 recordObject.insert("lastedit", qry.value(qry.record().indexOf("lastedit")).toString());
                 recordObject.insert("latitude", qry.value(qry.record().indexOf("latitude")).toString());
                 recordObject.insert("longitude", qry.value(qry.record().indexOf("longitude")).toString());
+                recordObject.insert("elapsetime", qry.value(qry.record().indexOf("elapsetime")).toString());
                 //qDebug() << "lastedit: " + eucaTemp.value(5);
                 //eucaObject.insert("euca_image", recordObject);
                 recordsArray.push_back(recordObject);

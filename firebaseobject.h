@@ -16,11 +16,12 @@
 
 #include "firebase/app.h"
 #include "firebase/auth.h"
-#include "firebase/util.h"
-#include "firebase/database.h"
+#include "firebase//util.h"
+//#include "firebase/database.h"
 
 using ::firebase::App;
 using ::firebase::AppOptions;
+
 using ::firebase::Future;
 using ::firebase::FutureBase;
 using ::firebase::auth::Auth;
@@ -47,10 +48,14 @@ class FirebaseObject : public QObject
 public:
     explicit FirebaseObject(QObject *parent = 0);
 
+
+    Q_INVOKABLE bool Initialize();
     Q_INVOKABLE bool signIn();
     Q_INVOKABLE bool signOut();
     Q_INVOKABLE bool checkUserSignIn();
     Q_INVOKABLE bool registerUser();
+    Q_INVOKABLE bool createNewUser();
+    Q_INVOKABLE bool checkUserCreation();
 
     Q_INVOKABLE bool connectDB();
 
@@ -79,8 +84,8 @@ public:
     UserLogin m_user;
     QString m_logMessage = "Plese sign in...";
 
-    ::firebase::database::Database* m_database;
-    firebase::database::DatabaseReference m_dbref;
+    //::firebase::database::Database* m_database;
+    //firebase::database::DatabaseReference m_dbref;
 
 signals:
     void emailChanged();

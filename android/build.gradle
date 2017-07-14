@@ -8,7 +8,7 @@ buildscript {
         /**********************************************
          *   Google Firebase   ************************
          **********************************************/
-        classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'com.google.gms:google-services:3.1.0'
     }
 }
 
@@ -20,16 +20,41 @@ allprojects {
 
 apply plugin: 'com.android.application'
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    /**********************************************
-     *   Google Firebase   ************************
-     **********************************************/
-    compile 'com.google.firebase:firebase-auth:10.2.4'
-    compile 'com.google.firebase:firebase-database:10.2.4'
-    //compile 'com.google.firebase:firebase-core:10.2.4'
-    compile 'com.google.android.gms:play-services-base:10.2.4'
+project.ext {
+  // Configure the Firebase C++ SDK location.
+  firebase_cpp_sdk_dir = System.getProperty('firebase_cpp_sdk.dir')
+  if (firebase_cpp_sdk_dir == null || firebase_cpp_sdk_dir.isEmpty()) {
+    firebase_cpp_sdk_dir = System.getenv('FIREBASE_CPP_SDK_DIR')
+    if (firebase_cpp_sdk_dir == null || firebase_cpp_sdk_dir.isEmpty()) {
+      if ((new File('firebase_cpp_sdk')).exists()) {
+        firebase_cpp_sdk_dir = 'firebase_cpp_sdk'
+      } else {
+        throw new StopActionException(
+          'firebase_cpp_sdk.dir property or the FIREBASE_CPP_SDK_DIR ' +
+          'environment variable must be set to reference the Firebase C++ ' +
+          'SDK install directory.  This is used to configure static library ' +
+          'and C/C++ include paths for the SDK.')
+      }
+    }
+  }
+  if (!(new File(firebase_cpp_sdk_dir)).exists()) {
+    throw new StopActionException(
+      sprintf('Firebase C++ SDK directory %s does not exist',
+              firebase_cpp_sdk_dir))
+  }
+  // Check the NDK location using the same configuration options as the
+  // experimental Gradle plug-in.
+  ndk_dir = project.android.ndkDirectory
+  if (ndk_dir == null || !ndk_dir.exists()) {
+    ndk_dir = System.getenv('ANDROID_NDK_HOME')
+    if (ndk_dir == null || ndk_dir.isEmpty()) {
+      throw new StopActionException(
+        'Android NDK directory should be specified using the ndk.dir ' +
+        'property or ANDROID_NDK_HOME environment variable.')
+    }
+  }
 }
+
 
 android {
     /*******************************************************
@@ -59,6 +84,7 @@ android {
             renderscript.srcDirs = ['src']
             assets.srcDirs = ['assets']
             jniLibs.srcDirs = ['libs']
+            jni.srcDirs = []
        }
     }
 
@@ -68,11 +94,21 @@ android {
 
     defaultConfig {
         applicationId "ai.suntrust.edds"
-        minSdkVersion 16
-        targetSdkVersion 16
+        minSdkVersion 22
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }
 }
 
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    /**********************************************
+     *   Google Firebase   ************************
+     **********************************************/
+    compile 'com.google.firebase:firebase-auth:11.0.2'
+    compile 'com.google.android.gms:play-services-base:11.0.2'
+}
+
 apply plugin: 'com.google.gms.google-services'
+

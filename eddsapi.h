@@ -23,7 +23,7 @@ public:
     QString fileNameFromGallery() const;
     void setFileNameFromGallery(const QString &fileNameFromGallery);
 
-    Q_INVOKABLE int sendImageFile(QString file_path);
+    Q_INVOKABLE int sendImageFile(QString file_path, QString serverIP);
     Q_INVOKABLE QByteArray readImageFile(QString file_path);
     Q_INVOKABLE QString getImageFileName(QString file_path);
     Q_INVOKABLE QString getImageFilePath(QString file_path);
@@ -48,8 +48,8 @@ public:
     Q_INVOKABLE bool updateEucaImageFileProcess(QString imageId, QString processed);
     Q_INVOKABLE QString readEucaImageIdFromFile(QString filename);
     Q_INVOKABLE QString readEucaImage(QString type);
-    Q_INVOKABLE bool updateDiseaseType2Filename(QString filename, QString diseaseType);
-    Q_INVOKABLE bool updateDiseaseType(QString imageId, QString diseaseType);
+    Q_INVOKABLE bool updateDiseaseType2Filename(QString filename, QString diseaseType, QString stage, QString level, QString elapsetime);
+    Q_INVOKABLE bool updateDiseaseType(QString imageId, QString diseaseType, QString stage, QString level, QString lastedit, QString elapsetime);
     Q_INVOKABLE QString readDiseaseType(QString imageId);
     Q_INVOKABLE int countDiseaseType(QString diseaseType);
     Q_INVOKABLE int readSendFileCount(QString filename);

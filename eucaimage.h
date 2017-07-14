@@ -30,8 +30,8 @@ class EucaImage : public QObject
 public:
     explicit EucaImage(QObject *parent = 0);
 
-    Q_INVOKABLE void getProcessingStatus();
-    Q_INVOKABLE void getDiseaseType();
+    Q_INVOKABLE void getProcessingStatus(QString serverIP);
+    Q_INVOKABLE void getDiseaseType(QString serverIP);
 
     Q_INVOKABLE QString _getImageId();
     Q_INVOKABLE void _setImageId(QString imageId);

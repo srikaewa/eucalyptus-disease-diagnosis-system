@@ -9,8 +9,9 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Window 2.2
 import QtQuick.Layouts 1.3
 import Qt.labs.settings 1.0
-//import QtGraphicalEffects 1.0
 
+
+//import QtGraphicalEffects 1.0
 
 //import QtGraphicalEffects 1.0
 Item {
@@ -29,7 +30,7 @@ Item {
     property alias textFieldPassword: textFieldPassword
     property alias buttonRememberSignIn: buttonRememberSignIn
 
-    Settings{
+    Settings {
         property alias rememberSignedIn: buttonRememberSignIn.checked
         property alias userEmail: textFieldEmail.text
         property alias userPassword: textFieldPassword.text
@@ -38,59 +39,67 @@ Item {
         //property alias userOrganization: textFieldOrganization.text
     }
 
-    Rectangle{
+    Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(1,1,1,1)
+        color: Qt.rgba(1, 1, 1, 1)
 
-    Flickable{
-        id: flickableUserForm
-        width: parent.width
-        height: parent.height
-        flickableDirection: Flickable.VerticalFlick
-        contentHeight: columnWrapper.height * 1.2
+        Flickable {
+            id: flickableUserForm
+            width: parent.width
+            height: parent.height
+            flickableDirection: Flickable.VerticalFlick
+            contentHeight: columnWrapper.height * 1.2
 
-        ColumnLayout{
-            id: columnWrapper
-            spacing: 20
-            anchors{
-                centerIn: parent
-            }
+            ColumnLayout {
+                id: columnWrapper
+                spacing: 20
+                anchors {
+                    centerIn: parent
+                }
 
-            //anchors{
+                //anchors{
                 //horizontalCenter: parent.horizontalCenter
                 //verticalCenter: parent.verticalCenter
-            //    margins: 20
-            //    horizontalCenter: parent.horizontalCenter
-            //}
-
-            Row{
-                //Layout.fillWidth: true
-                Layout.alignment: Qt.AlignHCenter
-                Image{
-                    source: "/images/SUANKITTI.png"
-                    height: 120
-                    width: 240
-                    fillMode: Image.PreserveAspectFit
+                //    margins: 20
+                //    horizontalCenter: parent.horizontalCenter
+                //}
+                Row {
+                    //Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignHCenter
+                    Image {
+                        source: "/images/SUANKITTI.png"
+                        height: 120
+                        width: 240
+                        fillMode: Image.PreserveAspectFit
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: firebaseObject.Initialize()
+                        }
+                    }
+                    Image {
+                        source: "/images/EUTECH.png"
+                        height: 120
+                        width: 240
+                        fillMode: Image.PreserveAspectFit
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: firebaseObject.checkUserCreation();
+                        }
+                    }
                 }
-                Image{
-                    source: "/images/EUTECH.png"
-                    height: 120
-                    width: 240
-                    fillMode: Image.PreserveAspectFit
-                }
-            }
 
-            Label {
-                id: label
-                width: parent.width
-                height: 30
-                text: qsTr("EUCALYPTUS DISEASE DIAGNOSIS SYSTEM\n")
-                font.family: fontRegular.name
-                font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
-                font.bold: true
-                Layout.alignment: Qt.AlignHCenter
-            }
-            /*RowLayout{
+                Label {
+                    id: label
+                    width: parent.width
+                    height: 30
+                    text: qsTr("EUCALYPTUS DISEASE DIAGNOSIS SYSTEM\n")
+                    font.family: fontRegular.name
+                    font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
+                    font.bold: true
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                /*RowLayout{
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
                 Label{
@@ -159,12 +168,11 @@ Item {
                 //    font.family: fontRegular.name
                 //    font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
                 //    font.bold: true
-               // }
-
-                RowLayout{
+                // }
+                RowLayout {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignHCenter
-                    Image{
+                    Image {
                         id: imageEmail
                         Layout.preferredWidth: 36
                         Layout.preferredHeight: 36
@@ -185,18 +193,16 @@ Item {
                     }
                 }
 
-
                 //Label{
                 //    text: "Password "
                 //    font.family: fontRegular.name
                 //    font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
                 //    font.bold: true
                 //}
-
-                RowLayout{
+                RowLayout {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignHCenter
-                    Image{
+                    Image {
                         id: imageLock
                         Layout.preferredWidth: 36
                         Layout.preferredHeight: 36
@@ -218,62 +224,62 @@ Item {
                     }
                 }
 
-            RowLayout{
-                Layout.alignment: Qt.AlignHCenter
-                Button {
-                    id: buttonSignIn
-                    width: 134
-                    height: 40
-                    text: "Sign In"
+                RowLayout {
+                    Layout.alignment: Qt.AlignHCenter
+                    Button {
+                        id: buttonSignIn
+                        width: 134
+                        height: 40
+                        text: "Sign In"
+                        font.family: fontRegular.name
+                        font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
+                        flat: true
+                    }
+
+                    Label {
+                        text: "       "
+                    }
+
+                    Button {
+                        id: buttonSignUp
+                        width: 134
+                        height: 40
+                        text: "Sign Up"
+                        font.family: fontRegular.name
+                        font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
+                        flat: true
+                    }
+                    Label {
+                        text: "       "
+                    }
+                    Button {
+                        id: buttonRememberSignIn
+                        width: 134
+                        height: 40
+                        text: "Remember me"
+                        font.family: fontRegular.name
+                        font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
+                        flat: true
+                        checkable: true
+                        checked: false
+                        enabled: false
+                    }
+                }
+
+                Label {
+                    id: labelUserLoginStatus
+                    text: "Please sign in to begin using app..."
                     font.family: fontRegular.name
+                    font.italic: true
                     font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
-                    flat: true
+                    Layout.alignment: Qt.AlignHCenter
                 }
 
-                Label{
-                    text: "       "
+                Label {
+                    text: "\n\n\n\n"
                 }
-
-                Button {
-                    id: buttonSignUp
-                    width: 134
-                    height: 40
-                    text: "Sign Up"
-                    font.family: fontRegular.name
-                    font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
-                    flat: true
-                }
-                Label{
-                    text: "       "
-                }
-                Button{
-                    id: buttonRememberSignIn
-                    width: 134
-                    height: 40
-                    text: "Remember me"
-                    font.family: fontRegular.name
-                    font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
-                    flat: true
-                    checkable: true
-                    checked: false
-                    enabled: false
-                }
-            }
-
-            Label {
-                id: labelUserLoginStatus
-                text: "Please sign in to begin using app..."
-                font.family: fontRegular.name
-                font.italic: true;
-                font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
-                Layout.alignment: Qt.AlignHCenter
-            }
-
-            Label{
-                text: "\n\n\n\n"
             }
         }
-    }
     }
     BusyIndicator {
         id: busyIndicatorUserLogin

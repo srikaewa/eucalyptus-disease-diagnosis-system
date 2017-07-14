@@ -38,7 +38,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     images/ic_more_vert_white_48pt.png \
-    google-services.json \
     android/AndroidManifest.xml \
     android/gradle/wrapper/gradle-wrapper.jar \
     android/gradlew \
@@ -46,7 +45,10 @@ DISTFILES += \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat \
-    android/src/ImageFromActivityResult.java
+    android/src/ImageFromActivityResult.java \
+    android/gradle.properties \
+    android/local.properties \
+    android/google-services.json
 
 # add static openssl library as Android 6.0+ do not support openssl anymore
 contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
@@ -63,6 +65,6 @@ ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 INCLUDEPATH += $$PWD/../firebase_cpp_sdk/libs/android/armeabi-v7a/c++
 DEPENDPATH += $$PWD/../firebase_cpp_sdk/libs/android/armeabi-v7a/c++
 
-LIBS += -L$$PWD/../firebase_cpp_sdk/libs/android/armeabi-v7a/c++/ -lauth
-LIBS += -L$$PWD/../firebase_cpp_sdk/libs/android/armeabi-v7a/c++/ -ldatabase
 LIBS += -L$$PWD/../firebase_cpp_sdk/libs/android/armeabi-v7a/c++/ -lapp
+LIBS += -L$$PWD/../firebase_cpp_sdk/libs/android/armeabi-v7a/c++/ -lauth
+#LIBS += -L$$PWD/../firebase_cpp_sdk/libs/android/armeabi-v7a/c++/ -ldatabase

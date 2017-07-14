@@ -1,4 +1,4 @@
-import QtQuick 2.5
+import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtMultimedia 5.8
 import QtQuick.Window 2.2
@@ -32,22 +32,22 @@ StackView {
     property bool serverANNStatus: false
     property bool serverFileStatus: false
 
-    signal diseaseTypeRecieved(string imageId, string dType)
+    signal diseaseTypeRecieved(string imageId, string dType, string dStage, string dLevel, string dLastedit, string dElapsetime)
 
     Component.onCompleted: {
-        pageDashboard.checkANNServer("http://192.168.0.21:3000/checkANNServer");
-        //pageDashboard.checkANNServer("http://172.31.171.16:3000/checkANNServer");
+        pageDashboard.checkANNServer("http://" + pageSystemSetting.textFieldServerIPAddress.text + ":9099/checkANNServer")
 
-        pageDashboard.checkFileServer("http://192.168.0.21:3009/checkFileServer");
+        //pageDashboard.checkANNServer("http://172.31.171.16:9099/checkANNServer");
+        pageDashboard.checkFileServer("http://" + pageSystemSetting.textFieldServerIPAddress.text + ":3009/checkFileServer")
         //pageDashboard.checkFileServer("http://172.31.171.16:3009/checkFileServer");
     }
 
     onDiseaseTypeRecieved: {
-        console.log("Disease type recieved -> " + dType);
+        console.log("Disease type recieved -> " + dType)
         if (dType != "x" && dType.length > 0) {
-            myEDDSApi.updateDiseaseType(imageId, dType);
-            myEDDSApi.updateEucaImageFileProcess(imageId, "true");
-            pageDashboard.fillDashboardModel("*");
+            myEDDSApi.updateDiseaseType(imageId, dType, dStage, dLevel, dLastedit, dElapsetime)
+            myEDDSApi.updateEucaImageFileProcess(imageId, "true")
+            pageDashboard.fillDashboardModel("*")
         }
     }
 
@@ -61,9 +61,9 @@ StackView {
         }
     }
 
-    Item{
+    Item {
         id: cameraPreviewStack
-        CameraPreview{
+        CameraPreview {
             id: cameraPreview
             visible: false
         }
@@ -72,83 +72,9 @@ StackView {
     Item {
         id: mainView
 
-        Rectangle{
-            id: rectangleSeachDisease
-            width: Screen.desktopAvailableWidth - 10
-            height: 50
-            anchors{
-                left: parent.left
-                leftMargin: 5
-                top: parent.top
-                topMargin: 5
-            }
-
-            ToolButton {
-                id: toolbuttonMenu
-                anchors.left: parent.left
-                anchors.leftMargin: 5
-                contentItem: ImageButton {
-                    imageFile: "/images/ic_menu_black_48dp.png"
-                }
-                onClicked: drawer.open()
-            }
-            TextField {
-                            id: textFieldSearchDisease
-                            placeholderText: "Search disease 'cryptos'..."
-                            font.family: fontRegular.name
-                            font.pixelSize: 20
-                            font.capitalization: Font.Capitalize
-                            //color: "black"
-                            color: "black"
-                            anchors{
-                                left: toolbuttonMenu.right
-                                leftMargin: 5
-                                right: toolbuttonOption.left
-                                rightMargin: 5
-                            }
-                        }
-
-
-            ToolButton {
-                id: toolbuttonOption
-                anchors.right: parent.right
-                anchors.rightMargin: 5
-                contentItem: ImageButton {
-                    imageFile: "/images/ic_more_vert_black_48dp.png"
-                }
-                onClicked: optionsMenu.open()
-
-
-                Menu {
-                    id: optionsMenu
-                    x: parent.width - width
-                    transformOrigin: Menu.TopRight
-
-                    MenuItem {
-                        text: "Settings"
-                        onTriggered: settingsPopup.open()
-                    }
-                    MenuItem {
-                        text: "About"
-                        onTriggered: aboutDialog.open()
-                    }
-                }
-            }
-
-        }
-        DropShadow {
-                anchors.fill: rectangleSeachDisease
-                horizontalOffset: 2
-                verticalOffset: 2
-                radius: 5
-                samples: 17
-                color: "#80000000"
-                source: rectangleSeachDisease
-            }
-
         ListView {
             id: dashboardListView
-            anchors{
+            anchors {
                 top: rectangleSeachDisease.bottom
                 topMargin: 5
                 left: parent.left
@@ -198,6 +124,7 @@ StackView {
                             }
                             onClicked: {
 
+
                                 //myEDDSApi.getProcessingStatus(imageId);
                             }
                         }
@@ -211,46 +138,54 @@ StackView {
                             interval: 5000
                             repeat: true
                             triggeredOnStart: true
-                            running: ((myEDDSApi.readDiseaseType(imageId) == 'x') && (serverANNStatus==true) ? true : false)
+                            running: ((myEDDSApi.readDiseaseType(
+                                           imageId) == 'x')
+                                      && (serverANNStatus == true) ? true : false)
                             //running: false
                             onTriggered: {
                                 if (serverANNStatus) {
-                                    var _filename = myEDDSApi.getImageFileName(filename);
-                                    if(myEDDSApi.isFileUploaded(_filename) && (myEDDSApi.readEucaImageIdFromFile(_filename)=="xxxxxxxxxxxxxxxxx"))
-                                    {
-                                        postToEDDS(_filename,
-                                                   true, 'x',
+                                    var _filename = myEDDSApi.getImageFileName(
+                                                filename)
+                                    if (myEDDSApi.isFileUploaded(_filename)
+                                            && (myEDDSApi.readEucaImageIdFromFile(
+                                                    _filename) == "xxxxxxxxxxxxxxxxx")) {
+                                        postToEDDS(_filename, true,
+                                                   'x', '-', '-',
                                                    pageUser.textFieldEmail.text,
                                                    todayDate, todayDate,
-                                                   latitude,longitude);
-                                    }
-                                    else
-                                    {
-                                        var count = myEDDSApi.readRunClassifyCount(imageId);
-                                        console.log("Counting diseasetype of x = " + count);
+                                                   latitude, longitude, '-')
+                                    } else {
+                                        var count = myEDDSApi.readRunClassifyCount(
+                                                    imageId)
+                                        console.log("Counting diseasetype of x = " + count)
                                         if (count == 0) {
-                                            busyIndicatorProcessing.running = true;
-                                            myEDDSApi.setRunClassifyCount(imageId, "1");
-                                            runClassify(imageId);
+                                            busyIndicatorProcessing.running = true
+                                            myEDDSApi.setRunClassifyCount(
+                                                        imageId, "1")
+                                            runClassify(imageId)
                                         } else {
                                             if (count < 10) {
-                                                console.log("Call getDiseaseType from server");
-                                                pageDashboard.getDiseaseType(imageId);
-                                                count = count + 1;
-                                                myEDDSApi.setRunClassifyCount(imageId,count.toString());
-                                                busyIndicatorProcessing.running = true;
+                                                console.log("Call getDiseaseType from server")
+                                                pageDashboard.getDiseaseType(
+                                                            imageId)
+                                                count = count + 1
+                                                myEDDSApi.setRunClassifyCount(
+                                                            imageId,
+                                                            count.toString())
+                                                busyIndicatorProcessing.running = true
                                             } else {
-                                                timerGetDiseaseType.stop();
-                                                busyIndicatorProcessing.running = false;
-                                                imageRefresh.visible = true;
+                                                timerGetDiseaseType.stop()
+                                                busyIndicatorProcessing.running = false
+                                                imageRefresh.visible = true
                                             }
                                         }
                                     }
                                 } else {
-                                    messageDialogServerStatus.text = "Can't connect to ANN server...!";
-                                    messageDialogServerStatus.open();
-                                    busyIndicatorProcessing.running = false;
-                                    timerGetDiseaseType.stop();
+                                    messageDialogServerStatus.text
+                                            = "Can't connect to ANN server...!"
+                                    messageDialogServerStatus.open()
+                                    busyIndicatorProcessing.running = false
+                                    timerGetDiseaseType.stop()
                                 }
                             }
                         }
@@ -265,29 +200,32 @@ StackView {
                             onTriggered: {
                                 if (serverFileStatus) {
                                     var _filename = myEDDSApi.getImageFileName(
-                                                filename);
+                                                filename)
                                     var count = myEDDSApi.readSendFileCount(
-                                                _filename);
+                                                _filename)
                                     if (count == 0) {
                                         busyIndicatorFileUploading.running = true
                                         myEDDSApi.setSendFileCount(_filename,
                                                                    "1")
                                         //myEDDSApi.sendImageFile("file://" + myEDDSApi.getDefaultHomePath() + "/" + filename);
-                                        myEDDSApi.sendImageFile(_filename)
+                                        myEDDSApi.sendImageFile(_filename, pageSystemSetting.textFieldServerIPAddress.text)
                                     } else {
 
                                         if (count < 8) {
-                                            console.log("Is file " + _filename + " uploaded??");
+                                            console.log("Is file " + _filename + " uploaded??")
                                             if (myEDDSApi.isFileUploaded(
                                                         _filename)) {
                                                 console.log("File " + _filename
-                                                            + " has been uploaded already...");
+                                                            + " has been uploaded already...")
                                                 //console.log("Check status of computation...");
-                                                var todayDate = new Date();
-                                                myEDDSApi.updateDiseaseType2Filename(_filename,"x");
-                                                pageDashboard.fillDashboardModel("*");
-                                                busyIndicatorFileUploading.running = false;
-                                                timerSendFile.stop();
+                                                var todayDate = new Date()
+                                                myEDDSApi.updateDiseaseType2Filename(
+                                                            _filename,
+                                                            "x", "-", "-","-");
+                                                pageDashboard.fillDashboardModel(
+                                                            "*")
+                                                busyIndicatorFileUploading.running = false
+                                                timerSendFile.stop()
                                             } else {
                                                 console.log("Uploading file " + _filename)
                                                 busyIndicatorFileUploading.running = true
@@ -347,7 +285,13 @@ StackView {
                                      > parent.height) ? parent.height / 4 : parent.width / 4)
                             height: width
                             source: "/images/ic_refresh_white_48dp.png"
-                            visible: (busyIndicatorProcessing.running == false) && (myEDDSApi.isFileProcessed(myEDDSApi.getImageFileName(filename)) == false) && (myEDDSApi.isFileUploaded(myEDDSApi.getImageFileName(filename))==true)
+                            visible: (busyIndicatorProcessing.running == false)
+                                     && (myEDDSApi.isFileProcessed(
+                                             myEDDSApi.getImageFileName(
+                                                 filename)) == false)
+                                     && (myEDDSApi.isFileUploaded(
+                                             myEDDSApi.getImageFileName(
+                                                 filename)) == true)
 
                             MouseArea {
                                 anchors {
@@ -356,8 +300,8 @@ StackView {
                                 onClicked: {
                                     myEDDSApi.setRunClassifyCount(imageId, "0")
                                     timerGetDiseaseType.start()
-                                    pageDashboard.checkANNServer("http://192.168.0.21:3000/checkANNServer")
-                                    //pageDashboard.checkANNServer("http://172.31.171.16:3000/checkANNServer")
+                                    pageDashboard.checkANNServer("http://" + pageSystemSetting.textFieldServerIPAddress.text + ":9099/checkANNServer")
+                                    //pageDashboard.checkANNServer("http://172.31.171.16:9099/checkANNServer")
                                 }
                             }
                         }
@@ -371,7 +315,10 @@ StackView {
                                      > parent.height) ? parent.height / 4 : parent.width / 4)
                             height: width
                             source: "/images/ic_publish_white_48dp.png"
-                            visible: (myEDDSApi.isFileUploaded(myEDDSApi.getImageFileName(filename))==false) && (busyIndicatorFileUploading.running==false)
+                            visible: (myEDDSApi.isFileUploaded(
+                                          myEDDSApi.getImageFileName(
+                                              filename)) == false)
+                                     && (busyIndicatorFileUploading.running == false)
 
                             MouseArea {
                                 anchors {
@@ -380,18 +327,18 @@ StackView {
                                 onClicked: {
                                     myEDDSApi.setSendFileCount(filename, "0")
                                     timerSendFile.start()
-                                    //pageDashboard.checkFileServer("http://192.168.0.21:3009/checkFileServer")
-                                    pageDashboard.checkFileServer("http://172.31.171.16:3009/checkFileServer")
-
+                                    pageDashboard.checkFileServer("http://" + pageSystemSetting.textFieldServerIPAddress.text + ":3009/checkFileServer")
                                 }
                             }
                         }
                     }
 
                     Text {
-                        text: "ID: " + imageId + "\n" + myEDDSApi.getImageFileName(
-                                  filename) + "\n" + "Latitude: " + latitude + " \nLongitude: " + longitude + "\nLast edit: "
-                              + lastedit + "\nDisease Type: " + diseasetype
+                        text: "ID: " + imageId + "\n" + myEDDSApi.getImageFileName(filename)
+                              + "\n" + "Latitude: " + latitude + " \nLongitude: "
+                              + longitude + "\nSubmited: " + submit + "\nLast edit: " + lastedit + "\nDisease Type: "
+                              + diseasetype + "\nStage: " + stage + "\nLevel: "
+                              + level + "\nElapsed Time: " + elapsetime
                         font.family: fontRegular.name
                         font.pixelSize: 16
                         MouseArea {
@@ -435,6 +382,80 @@ StackView {
 
         ControlCenter {
             id: controlCenter
+        }
+
+        Rectangle {
+            id: rectangleSeachDisease
+            width: Screen.desktopAvailableWidth - 16
+            height: 50
+            anchors {
+                left: parent.left
+                leftMargin: 8
+                top: parent.top
+                topMargin: 8
+            }
+            radius: 2
+
+            ToolButton {
+                id: toolbuttonMenu
+                anchors.left: parent.left
+                anchors.leftMargin: 5
+                anchors.verticalCenter: parent.verticalCenter
+                contentItem: ImageButton {
+                    imageFile: "/images/ic_menu_black_48dp.png"
+                    //(textFieldSearchDisease.focus ? "/images/ic_arrow_back_black_48dp.png" : "/images/ic_menu_black_48dp.png")
+                    onClicked: drawer.open()
+                }
+            }
+            TextField {
+                id: textFieldSearchDisease
+                placeholderText: "Search disease 'cryptos'..."
+                font.family: fontRegular.name
+                font.pixelSize: 20
+                //font.capitalization: Font.Capitalize
+                //color: "black"
+                color: "black"
+                anchors {
+                    left: toolbuttonMenu.right
+                    leftMargin: 5
+                    right: toolbuttonOption.left
+                    verticalCenter: parent.verticalCenter
+                }
+            }
+
+            ToolButton {
+                id: toolbuttonOption
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                contentItem: ImageButton {
+                    imageFile: "/images/ic_more_vert_black_48dp.png"
+                    //(textFieldSearchDisease.focus ? "/images/ic_arrow_back_black_48dp.png" : "/images/ic_menu_black_48dp.png")
+                    onClicked: optionsMenu.open()
+                }
+                Menu {
+                    id: optionsMenu
+                    x: parent.width - width
+                    transformOrigin: Menu.TopRight
+
+                    MenuItem {
+                        text: "Settings"
+                        onTriggered: swipeView.setCurrentIndex(2);
+                    }
+                    MenuItem {
+                        text: "About"
+                        onTriggered: aboutDialog.open()
+                    }
+                }
+            }
+        }
+        DropShadow {
+            anchors.fill: rectangleSeachDisease
+            horizontalOffset: 2
+            verticalOffset: 2
+            radius: 5
+            samples: 17
+            color: "#80000000"
+            source: rectangleSeachDisease
         }
     }
 

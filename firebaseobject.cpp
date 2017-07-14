@@ -2,25 +2,31 @@
 
 FirebaseObject::FirebaseObject(QObject *parent) : QObject(parent)
 {
+   //Initialize();
+}
+
+bool FirebaseObject::Initialize()
+{
     // get main activity
-    //QPlatformNativeInterface *interface =            QApplication::platformNativeInterface();
-    //m_act = (jobject)interface->nativeResourceForIntegration("QtActivity");
+    //m_act = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
     m_act = QtAndroid::androidActivity();
     if(!m_act.isValid())
         qDebug()<<"CLASS NOT VALID!!!!!!!!";
     else{
         qDebug()<<"HURAY!";
         jobject activity = (jobject)m_act.object<jobject>();
-        qDebug() << "Start registering user...";
         #if defined(__ANDROID__)
              qDebug() << "Android Firebase!";
-             m_app = App::Create(AppOptions(), m_qjniEnv, activity);
-             //qDebug() << "Created the Firebase app -> " << m_app->name();
+             //m_app = App::Create(AppOptions(), m_qjniEnv, activity);
+             //m_app = App::Create(AppOptions(), m_qjniEnv, m_act);
+             //App* app;
+             //firebase::App* app = firebase::App::Create();
+             m_app = firebase::App::Create(m_qjniEnv, activity);
+             qDebug() << "Created the Firebase app successfully";
         #else   // !defined(__ANDROID__)
             qDebug() << "Non-Android Firebase!";
-            app = App::Create(AppOptions());
+            m_app = App::Create(AppOptions());
         #endif  // !defined(__ANDROID__)
-        qDebug() << "Huray!!!";
     }
     //my_jni_env = qjniEnv.operator JNIEnv *;
     //my_activity = (jobject)activity;
@@ -29,7 +35,7 @@ FirebaseObject::FirebaseObject(QObject *parent) : QObject(parent)
     //firebase::Future<firebase::auth::User*> result = m_auth->SignInWithEmailAndPassword("srikaewa@gmail.com", "123456");
     qDebug() << "Get ready for Firebase!";
     //qDebug() << "Authentication result -> "+m_result.status();
-
+    return true;
 }
 
 QString FirebaseObject::email() const
@@ -92,12 +98,12 @@ bool FirebaseObject::signIn()
     m_auth = Auth::GetAuth(m_app);
     qDebug() << "Entered email -> " << m_email;
     qDebug() << "Entered password -> " << m_password;
-    const char *kCustomEmail = m_email.toStdString().c_str();
-    const char *kCustomPassword = m_password.toStdString().c_str();
+    //const char *kCustomEmail = m_email.toStdString().c_str();
+    //const char *kCustomPassword = m_password.toStdString().c_str();
     //Future<User*> sign_in_future = m_auth->SignInWithEmailAndPassword(kCustomEmail, kCustomPassword);
     //Future<User*> sign_in_future = m_auth->SignInWithEmailAndPassword("srikaewa@gmail.com","12345678");
     //WaitForSignInFuture(sign_in_future, "Auth::SignInWithEmailAndPassword() existing email and password", kAuthErrorNone, m_auth);
-    UserLogin test_user(m_auth, kCustomEmail, kCustomPassword);
+    UserLogin test_user(m_auth, m_email, m_password);
     if(test_user.Login() == 0)
     {
         m_logMessage = test_user.get_logMessage();
@@ -147,27 +153,77 @@ bool FirebaseObject::checkUserSignIn()
     //const char* str = sign_in_user->display_name().c_str();
     //qDebug() << "Sign in future -> " << sign_in_user;
 
-/*    m_auth = Auth::GetAuth(m_app);
+    m_auth = Auth::GetAuth(m_app);
     qDebug() << "Entered email -> " << m_email;
     qDebug() << "Entered password -> " << m_password;
-    const char *kCustomEmail = m_email.toStdString().c_str();
-    const char *kCustomPassword = m_password.toStdString().c_str();
+    //const char *kCustomEmail = m_email.toStdString().c_str();
+    //const char *kCustomPassword = m_password.toStdString().c_str();
     // check if the account exists
-    UserLogin test_user(m_auth, kCustomEmail, kCustomPassword);
+    UserLogin test_user(m_auth, m_email, m_password);
 
     if(!test_user.testLogin())
     {
         m_logMessage = "Account " + email() + " already signed in...";
         m_signingIn = true;
-        return true;
+        return m_signingIn;
     }
     else
     {
         m_logMessage = "Account " + email() + " not signing in...";
         m_signingIn = false;
         return m_signingIn;
-    }*/
-    return m_signingIn;
+    }
+}
+
+bool FirebaseObject::createNewUser()
+{
+    App* app;
+    // get main activity
+    //m_act = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
+    QAndroidJniEnvironment qjniEnv;
+    QAndroidJniObject act;
+    act = QtAndroid::androidActivity();
+    if(!act.isValid())
+        qDebug()<<"CLASS NOT VALID!!!!!!!!";
+    else{
+        qDebug()<<"HURAY!";
+        jobject activity = (jobject)act.object<jobject>();
+        #if defined(__ANDROID__)
+             qDebug() << "Android Firebase!";
+             //m_app = App::Create(AppOptions(), m_qjniEnv, activity);
+             //m_app = App::Create(AppOptions(), m_qjniEnv, m_act);
+             //App* app;
+             //firebase::App* app = firebase::App::Create();
+             app = firebase::App::Create(qjniEnv, activity);
+             qDebug() << "Created the Firebase app successfully";
+        #else   // !defined(__ANDROID__)
+            qDebug() << "Non-Android Firebase!";
+            app = App::Create(AppOptions());
+        #endif  // !defined(__ANDROID__)
+    }
+    firebase::auth::Auth* auth = firebase::auth::Auth::GetAuth(app);
+    qDebug() << "Entered email -> " << m_email;
+    qDebug() << "Entered password -> " << m_password;
+    const char *kCustomEmail = m_email.toStdString().c_str();
+    const char *kCustomPassword = m_password.toStdString().c_str();
+    firebase::Future<firebase::auth::User*> result =
+        auth->CreateUserWithEmailAndPassword(kCustomEmail, kCustomPassword);
+}
+
+bool FirebaseObject::checkUserCreation()
+{
+    firebase::Future<firebase::auth::User*> result =
+        m_auth->CreateUserWithEmailAndPasswordLastResult();
+    if (result.status() == firebase::kFutureStatusComplete) {
+      if (result.error() == firebase::auth::kAuthErrorNone) {
+        firebase::auth::User* user = *result.result();
+        qDebug() << "Create user succeeded!";
+        return true;
+      } else {
+        qDebug() << "Created user failed with error '%s'\n" << result.error_message();
+        return false;
+      }
+    }
 }
 
 bool FirebaseObject::registerUser()
@@ -175,10 +231,10 @@ bool FirebaseObject::registerUser()
     m_auth = Auth::GetAuth(m_app);
     qDebug() << "Entered email -> " << m_email;
     qDebug() << "Entered password -> " << m_password;
-    const char *kCustomEmail = m_email.toStdString().c_str();
-    const char *kCustomPassword = m_password.toStdString().c_str();
+    //const char *kCustomEmail = m_email.toStdString().c_str();
+    //const char *kCustomPassword = m_password.toStdString().c_str();
     // check if the account exists
-    UserLogin test_user(m_auth, kCustomEmail, kCustomPassword);
+    UserLogin test_user(m_auth, m_email, m_password);
 
     if(test_user.testLogin())
     {
@@ -202,9 +258,9 @@ bool FirebaseObject::registerUser()
 bool FirebaseObject::connectDB()
 {
     // get firebase database ready
-    m_database->GetInstance(m_app);
-    m_dbref = m_database->GetReference("eucalyptus-diagnosis-system").PushChild();
-    m_dbref.Child("users").Child("user").Child("email").SetValue("edds@gmail.com");
+    //m_database->GetInstance(m_app);
+    //m_dbref = m_database->GetReference("eucalyptus-diagnosis-system").PushChild();
+    //m_dbref.Child("users").Child("user").Child("email").SetValue("edds@gmail.com");
     //m_dbref = m_database->GetReference();
     return true;
 }

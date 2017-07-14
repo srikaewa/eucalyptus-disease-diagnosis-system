@@ -17,9 +17,10 @@ UserLogin::~UserLogin() {
 bool UserLogin::Register()
 {
     int registerResult;
-    qDebug() << "Before register...";    
-    Future<User*> register_test_account = auth_->CreateUserWithEmailAndPassword(email(), password());
+    qDebug() << "Before register..." << email();
+    Future<User*> register_test_account = auth_->CreateUserWithEmailAndPassword(email().toStdString().c_str(), password().toStdString().c_str());
     registerResult = WaitForFuture(register_test_account, "CreateUserWithEmailAndPassword() to create temp user", kAuthErrorNone, auth_);
+
     /*user_ = register_test_account.result() ?  *register_test_account.result() : nullptr;
     std::string str;
     if(user_ == nullptr)
@@ -34,8 +35,8 @@ bool UserLogin::Register()
         return true;
      }
     qDebug() << "After register...";*/
-    std::string str = std::string("New ") + email_.c_str() + std::string(" user has been created.");
-    log_message_ = str.c_str();
+    //std::string str = std::string("New ") + email_.c_str() + std::string(" user has been created.");
+    log_message_ = "New " + email() + " user has been created.";
     //str = std::string("User ") + email() + std::string(" has been created. Please verify your email before signing in...");
     //log_message_ = str.c_str();
     return true;
@@ -44,7 +45,8 @@ bool UserLogin::Register()
 bool UserLogin::testLogin()
 {
     int loginResult;
-    Credential email_cred = EmailAuthProvider::GetCredential(email(), password());
+    qDebug() << "Test login for " << email();
+    Credential email_cred = EmailAuthProvider::GetCredential(email().toStdString().c_str(), password().toStdString().c_str());
     Future<User*> sign_in_cred = auth_->SignInWithCredential(email_cred);
     loginResult = WaitForSignInFuture(sign_in_cred, "Auth::SignInWithCredential() for UserLogin", kAuthErrorNone, auth_);
     if(loginResult == 0)
@@ -58,33 +60,34 @@ bool UserLogin::testLogin()
 int UserLogin::Login()
 {
     int loginResult;
-    Credential email_cred = EmailAuthProvider::GetCredential(email(), password());
+    qDebug() << "Loggin with user " + email();
+    Credential email_cred = EmailAuthProvider::GetCredential(email().toStdString().c_str(), password().toStdString().c_str());
     Future<User*> sign_in_cred = auth_->SignInWithCredential(email_cred);
     loginResult = WaitForSignInFuture(sign_in_cred, "Auth::SignInWithCredential() for UserLogin", kAuthErrorNone, auth_);
     if(loginResult == 0)
     {
         if(auth_->current_user()->is_email_verified())
         {
-            //const User* const* sign_in_user_ptr = sign_in_cred.result();
-            //const User* sign_in_user = sign_in_user_ptr == nullptr ? nullptr : *sign_in_user_ptr;
-            //const User* auth_user = auth_->current_user();
-            //qDebug() << "user id -> " << sign_in_user->uid().c_str();
-            std::string str = std::string("User ") + email_.c_str() + std::string(" signed in successfully!!");
-            log_message_ = str.c_str();
+            /*const User* const* sign_in_user_ptr = sign_in_cred.result();
+            const User* sign_in_user = sign_in_user_ptr == nullptr ? nullptr : *sign_in_user_ptr;
+            const User* auth_user = auth_->current_user();
+            qDebug() << "user id -> " << sign_in_user->uid().c_str();*/
+            //std::string str = std::string("User ") + email_.c_str() + std::string(" signed in successfully!!");
+            log_message_ = "User " + email() + " signed in successfully!!";
             return loginResult;
         }
         else
         {
             auth_->current_user()->SendEmailVerification();
-            std::string str = std::string("Please go to email ") + email_.c_str() + std::string(" to activate account!!");
-            log_message_ = str.c_str();
+            //std::string str = std::string("Please go to email ") + email_.c_str() + std::string(" to activate account!!");
+            log_message_ = "Please go to email " + email() + " to activate account!!";
             return -1;
         }
     }
     else
     {
-        std::string str = std::string("Sign in with ") + email_.c_str() + std::string(" failed. Account does not exists!!!");
-        log_message_ = str.c_str();
+        //std::string str = std::string("Sign in with ") + email_.c_str() + std::string(" failed. Account does not exists!!!");
+        log_message_ = "Sign in with " + email() + " failed. Account does not exists!!!";
         return -2;
     }
     //if(loginResult == 0)
@@ -153,8 +156,8 @@ int UserLogin::WaitForFuture(FutureBase future, const char* fn,
         return 2;
     }    
     // Wait for future to complete.
-    /*qDebug() << "  Calling ..." << fn;
-    int i = 0; */
+    qDebug() << "  Calling ..." << fn;
+    /* int i = 0; */
     while (future.status() == ::firebase::kFutureStatusPending)
     {
         //qDebug() << "Future status -> " << future.status();
@@ -165,18 +168,20 @@ int UserLogin::WaitForFuture(FutureBase future, const char* fn,
           return 3;
         }*/
     }
+    qDebug() << "Future status -> " << future.status();
     std::string str;
     // Log error result.
     if (log_error)
     {
+        qDebug() << "Future error!!!";
         const AuthError error = static_cast<AuthError>(future.error());
         if (error == expected_error) {
           const char* error_message = future.error_message();
 
           if (error_message)
           {
-            str = std::string("User ") + email_.c_str() + std::string(" has signed in.");
-            log_message_ = str.c_str();
+            //str = std::string("User ") + email_.c_str() + std::string(" has signed in.");
+            log_message_ = "User " + email() + " has signed in.";
             return 0;
           }
           else

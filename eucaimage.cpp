@@ -155,7 +155,7 @@ void EucaImage::setLastEdit(const QString &lastEdit)
     }
 }
 
-void EucaImage::getProcessingStatus()
+void EucaImage::getProcessingStatus(QString serverIP)
 {
     m_processed = false;
     // create custom temporary event loop on stack
@@ -166,7 +166,7 @@ void EucaImage::getProcessingStatus()
     QObject::connect(&mgr, SIGNAL(finished(QNetworkReply*)), this, SLOT(processingStatusReply(QNetworkReply*)));
 
     // the HTTP request
-    QNetworkRequest req( QUrl( QString("http://192.168.0.21:3000/runclassify/" + m_imageId) ) );
+    QNetworkRequest req( QUrl( QString("http://" + serverIP + ":9099/runclassify/" + m_imageId) ) );
     //QNetworkRequest req( QUrl( QString("http://172.31.171.16:3000/runclassify/" + m_imageId) ) );
     QNetworkReply *reply = mgr.get(req);
     eventLoop.exec(); // blocks stack until "finished()" has been called
@@ -193,7 +193,7 @@ void EucaImage::processingStatusReply(QNetworkReply* nr)
     }
 }
 
-void EucaImage::getDiseaseType()
+void EucaImage::getDiseaseType(QString serverIP)
 {
     // create custom temporary event loop on stack
     QEventLoop eventLoop;
@@ -203,7 +203,7 @@ void EucaImage::getDiseaseType()
     QObject::connect(&mgr, SIGNAL(finished(QNetworkReply*)), this, SLOT(getDiseaseTypeReply(QNetworkReply*)));
 
     // the HTTP request
-    QNetworkRequest req( QUrl( QString("http://192.168.0.21:3000/getDiseaseType/" + m_imageId) ) );
+    QNetworkRequest req( QUrl( QString("http://" + serverIP + ":9099/getDiseaseType/" + m_imageId) ) );
     //QNetworkRequest req( QUrl( QString("http://172.31.171.16:3000/getDiseaseType/" + m_imageId) ) );
     QNetworkReply *reply = mgr.get(req);
     eventLoop.exec(); // blocks stack until "finished()" has been called

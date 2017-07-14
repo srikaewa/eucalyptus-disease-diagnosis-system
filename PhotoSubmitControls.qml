@@ -196,7 +196,7 @@ FocusScope {
         function postToEDDS(){
             console.log('sending POST to EDDS...');
             var http = new XMLHttpRequest();
-            var url = "http://192.168.0.21:3000/eddsapi/euca_images";
+            var url = "http://" + pageSystemSetting.serverIPAddress + ":9099/eddsapi/euca_images";
             var params = '{"filename":"Test888","diseasetype":"Crypto","submitter":"Me","submit":"Tomorrow","lastedit":"Tomorrow"}';
 
             http.open("POST", url, true);
@@ -229,7 +229,7 @@ FocusScope {
                 }
             }
             var body = myEDDSApi.readImageFile(camera.imageCapture.capturedImagePath) + '\r\n'
-            xhr.open("POST", "http://192.168.0.21:3000/uploadFile");
+            xhr.open("POST", "http://" + pageSystemSetting.serverIPAddress + ":3000/uploadFile");
             xhr.setRequestHeader(
                 "Content-type", "multipart/form-data; boundary="+boundary);
             xhr.send(body);
@@ -243,7 +243,7 @@ FocusScope {
             formData.append('userPhoto', blob, image_file);
             var request = new XMLHttpRequest();
 
-            request.open('POST', 'http://192.168.0.21:3009/api/photo');
+            request.open('POST', 'http://' + pageSystemSetting.serverIPAddress + ':3009/api/photo');
             request.send(formData);
         }
 
@@ -263,7 +263,7 @@ FocusScope {
                      + boundary + '--';
 
             console.log(body);
-            xhr.open("POST", "http://192.168.0.21:3009/api/photo", true);
+            xhr.open("POST", "http://" + pageSystemSetting.serverIPAddress + ":3009/api/photo", true);
             xhr.setRequestHeader(
                 "Content-type", "multipart/form-data; boundary="+boundary);
             xhr.onreadystatechange = function ()

@@ -70,13 +70,13 @@ ApplicationWindow {
         }
     }
 
-    PageIndicator {
+    /*PageIndicator {
         count: 3
         currentIndex: swipeView.currentIndex
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 60
-    }
+    }*/
 
 /*    footer: TabBar {
         id: tabBar

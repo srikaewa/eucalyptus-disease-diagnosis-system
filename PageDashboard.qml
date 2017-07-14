@@ -1,4 +1,6 @@
-import QtQuick 2.4
+import QtQuick 2.7
+import QtQuick.Controls 2.1
+import QtQuick.Window 2.0
 
 PageDashboardForm {    
     signal imageIdRecieved(string imageId, string filename)
@@ -12,6 +14,10 @@ PageDashboardForm {
 
     textFieldSearchDisease.onTextChanged: {
         applyFilter(textFieldSearchDisease.text);
+    }
+
+    textFieldSearchDisease.onAccepted: {
+        textFieldSearchDisease.focus = false;
     }
 
     onImageIdRecieved: {
@@ -96,33 +102,14 @@ PageDashboardForm {
     }
 
 
-    /*function runClassify(imageId){
-        console.log('sending GET to runClassify for '+imageId);
-        var http = new XMLHttpRequest();
-        var url = "http://192.168.0.21:3000/runclassify/" + imageId;
-
-        http.open("GET", url, true);
-
-        http.onreadystatechange = function() {
-           if(http.readyState == 4 && http.status == 200) {
-               console.log("runClassify response -> " + http.responseText);
-               return http.responseText;
-           }
-           else
-           {
-               console.log("GET runClassify status -> " + http.status);
-               return http.status;
-           }
-        }
-        http.send();
-    }*/
-
-    function postToEDDS(filename, uploaded, diseasetype, submitter, submit, lastedit, latitude, longitude){
+    function postToEDDS(filename, uploaded, diseasetype, stage, level, submitter, submit, lastedit, latitude, longitude, elapsetime){
         console.log('sending POST to EDDS...');
         var http = new XMLHttpRequest();
-        var url = "http://192.168.0.21:3000/eddsapi/euca_images";
+        var url = "http://" + pageSystemSetting.textFieldServerIPAddress.text + ":9099/eddsapi/euca_images";
         //var url = "http://172.31.171.16:3000/eddsapi/euca_images";
-        var params = '{"filename":"' +filename+ '","uploaded":'+uploaded +',"diseasetype":"'+ diseasetype +'","submitter":"'+ submitter +'","submit":"'+submit+'","lastedit":"' + lastedit + '","latitude":"'+latitude+'","longitude":"'+longitude+'"}';
+        var params = '{"filename":"' +filename+ '","uploaded":'+uploaded +',"diseasetype":"'+ diseasetype + '","stage":"' + stage + '","level":"' + level + '","submitter":"'+ submitter +'","submit":"'+submit+'","lastedit":"' + lastedit + '","latitude":"'+latitude+'","longitude":"'+longitude+'","elapsetime":"' + elapsetime + '"}';
+
+        console.log('PARAMS: ' + params);
 
         http.open("POST", url, true);
 
@@ -169,40 +156,12 @@ PageDashboardForm {
                     return xhr.responseText;
                 }
         }
-        xhr.open("GET", "http://192.168.0.21:3000/runClassify/" + imageId);
+        xhr.open("GET", "http://" + pageSystemSetting.textFieldServerIPAddress.text + ":9099/runClassify/" + imageId);
         //xhr.open("GET", "http://172.31.171.16:3000/runClassify/" + imageId);
 
         xhr.send();
     }
 
-/*    function getDiseaseType(imageId)
-    {
-        console.log('sending GET to getDiseaseType for '+imageId);
-        var http = new XMLHttpRequest();
-        var url = "http://192.168.0.21:3000/getDiseaseType/" + imageId;
-        //var params = '{"filename":"' +filename+ '","uploaded":'+uploaded +',"diseasetype":"'+ diseasetype +'","submitter":"'+ submitter +'","submit":"'+submit+'","lastedit":"' + lastedit + '"}';
-
-        http.open("GET", url, true);
-
-        // Send the proper header information along with the request
-        //http.setRequestHeader("Content-type", "application/raw");
-        //http.setRequestHeader("Content-Length", params.length);// all browser wont support Refused to set unsafe header "Content-Length"
-        //http.setRequestHeader("Connection", "close");//Refused to set unsafe header "Connection"
-
-        // Call a function when the state
-        http.onreadystatechange = function() {
-           if(http.readyState == 4 && http.status == 200) {
-               console.log("getDiseaseType response -> " + http.responseText);
-               return http.responseText;
-           }
-           else
-           {
-               console.log("GET getDiseaseType status -> " + http.status);
-               return http.status;
-           }
-        }
-        http.send();
-    } */
     function getDiseaseType(imageId)
     {
         var xhr = new XMLHttpRequest();
@@ -216,11 +175,13 @@ PageDashboardForm {
                 if(xhr.readyState === XMLHttpRequest.DONE)
                 {
                     console.log("getDiseaseType response -> " + xhr.responseText);
-                    diseaseTypeRecieved(imageId, xhr.responseText);
+                    var object = JSON.parse(xhr.responseText);
+                    console.log("getDiseaseType response -> " + object.imageId);
+                    diseaseTypeRecieved(object.imageId, object.diseasetype, object.stage, object.level, object.lastedit, object.elapsetime);
                     return xhr.responseText;
                 }
         }
-        xhr.open("GET", "http://192.168.0.21:3000/getDiseaseType/" + imageId);
+        xhr.open("GET", "http://" + pageSystemSetting.textFieldServerIPAddress.text + ":9099/getDiseaseType/" + imageId);
         //xhr.open("GET", "http://172.31.171.16:3000/getDiseaseType/" + imageId);
 
         xhr.send();

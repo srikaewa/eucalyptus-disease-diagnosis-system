@@ -7,6 +7,7 @@ PageUserForm {
         {
             clearTextField();
         }
+        firebaseObject.Initialize();
     }
 
     buttonSignIn.onClicked: {
@@ -50,15 +51,15 @@ PageUserForm {
 
     function signIn()
     {
+        firebaseObject.email = textFieldEmail.text;
+        firebaseObject.password = textFieldPassword.text;
         if(firebaseObject.checkUserSignIn() == false)
         {
             busyIndicatorUserLogin.running = true;
             labelUserLoginStatus.text = "Signin in...";
-            firebaseObject.email = textFieldEmail.text;
-            firebaseObject.password = textFieldPassword.text;
-            if(firebaseObject.signIn() == true || godMode())
+            if(godMode())
             {
-                labelUserLoginStatus.text = firebaseObject.logMessage;
+                labelUserLoginStatus.text = "God Mode";
                 labelUserLoginStatus.color = "green";
                 buttonSignIn.text = "Sign Out";
                 buttonSignUp.enabled = false;
@@ -71,16 +72,37 @@ PageUserForm {
                 buttonRememberSignIn.checked = true;
                 //controlPanelSlidingMenu.drawer.dragMargin = 10;
                 //headerToolbar.visible = true;
-                swipeView.interactive = true;
+                //swipeView.interactive = false;
                 swipeView.setCurrentIndex(1);
             }
             else
             {
-                labelUserLoginStatus.text = firebaseObject.logMessage;
-                labelUserLoginStatus.color = "red";
-                buttonSignUp.enabled = true;
-                buttonRememberSignIn.enabled = false;
-                swipeView.interactive = false;
+                if(firebaseObject.signIn() == true)
+                {
+                    labelUserLoginStatus.text = firebaseObject.logMessage;
+                    labelUserLoginStatus.color = "green";
+                    buttonSignIn.text = "Sign Out";
+                    buttonSignUp.enabled = false;
+                    //textFieldFirstName.enabled = false;
+                    //textFieldLastName.enabled = false;
+                    //textFieldOrganization.enabled = false;
+                    textFieldEmail.enabled = false;
+                    textFieldPassword.enabled = false;
+                    buttonRememberSignIn.enabled = true;
+                    buttonRememberSignIn.checked = true;
+                    //controlPanelSlidingMenu.drawer.dragMargin = 10;
+                    //headerToolbar.visible = true;
+                    //swipeView.interactive = false;
+                    swipeView.setCurrentIndex(1);
+                }
+                else
+                {
+                    labelUserLoginStatus.text = firebaseObject.logMessage;
+                    labelUserLoginStatus.color = "red";
+                    buttonSignUp.enabled = true;
+                    buttonRememberSignIn.enabled = false;
+                    //swipeView.interactive = false;
+                }
             }
             busyIndicatorUserLogin.running = false;
         }
@@ -104,7 +126,7 @@ PageUserForm {
             //controlPanelSlidingMenu.drawer.dragMargin = 0;
             buttonRememberSignIn.enabled = false;
             //headerToolbar.visible = false;
-            swipeView.interactive = false;
+            //swipeView.interactive = false;
             swipeView.setCurrentIndex(0);
         }
     }

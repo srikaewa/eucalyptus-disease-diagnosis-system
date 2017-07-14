@@ -24,7 +24,6 @@
         <file>images/ic_check_white_48dp.png</file>
         <file>images/ic_clear_white_48dp.png</file>
         <file>images/ic_mode_edit_white_48dp.png</file>
-        <file>google-services.json</file>
         <file>firebaseobject.cpp</file>
         <file>firebaseobject.h</file>
         <file>userlogin.cpp</file>
@@ -49,5 +48,6 @@
         <file>images/ic_more_vert_black_48dp.png</file>
         <file>CameraPreview.qml</file>
         <file>images/ic_camera_white_48dp.png</file>
+        <file>images/ic_arrow_back_black_48dp.png</file>
     </qresource>
 </RCC>
