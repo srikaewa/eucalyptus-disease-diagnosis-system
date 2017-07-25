@@ -7,11 +7,12 @@ import Qt.labs.settings 1.0
 
 Item {
     property alias textFieldServerIPAddress: textFieldServerIPAddress
+    property alias textServerStatus: textServerStatus
 
     width: 800
     height: 480
 
-    Settings{
+    Settings {
         property alias serverIPAddress: textFieldServerIPAddress.text
     }
 
@@ -39,7 +40,7 @@ Item {
             }
         }
 
-        Label{
+        Label {
             anchors.centerIn: parent
             text: "Settings"
             font.family: fontRegular.name
@@ -57,7 +58,7 @@ Item {
         source: rectangleSettingHeader
     }
 
-    Flickable{
+    Flickable {
         anchors.top: rectangleSettingHeader.bottom
         anchors.topMargin: 10
         anchors.left: parent.left
@@ -68,17 +69,17 @@ Item {
         anchors.bottomMargin: 10
         clip: true
 
-        GridLayout{
+        GridLayout {
             id: gridSetting
             columns: 2
             anchors.fill: parent
-            Text{
+            Text {
                 text: "Server IP Address "
                 font.family: fontRegular.name
                 font.pixelSize: 18
-                Layout.preferredWidth: 40
+                Layout.preferredWidth: 50
             }
-            TextField{
+            TextField {
                 id: textFieldServerIPAddress
                 placeholderText: "xx.xx.xx.xx"
                 font.family: fontRegular.name
@@ -86,7 +87,34 @@ Item {
                 Layout.preferredWidth: 200
                 Layout.alignment: Qt.AlignLeft
             }
+            Text {
+                text: "Server Port "
+                font.family: fontRegular.name
+                font.pixelSize: 18
+                Layout.preferredWidth: 4
+            }
+            TextField {
+                id: textFieldServerIPPort
+                placeholderText: "3009"
+                text: "3009"
+                font.family: fontRegular.name
+                font.pixelSize: 18
+                Layout.preferredWidth: 200
+                Layout.alignment: Qt.AlignLeft
+            }
+            Text {
+                text: "Server Status "
+                font.family: fontRegular.name
+                font.pixelSize: 18
+                Layout.preferredWidth: 4
+            }
+            Text {
+                id: textServerStatus
+                text: ""
+                font.family: fontRegular.name
+                font.pixelSize: 18
+                Layout.preferredWidth: 4
+            }
         }
-
     }
 }

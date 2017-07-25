@@ -1,15 +1,25 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Window 2.0
+import QtPositioning 5.8
 
 PageDashboardForm {    
     signal imageIdRecieved(string imageId, string filename)
-    signal serverANNRunning(string status)
     signal serverFileRunning(string status)
 
     Component.onCompleted: {
         fillDashboardModel("*");
         //applyFilter("Crypto");
+    }
+
+    /*mouseAreaMap.onClicked: {
+        console.log("Mouse X:Y ->"+ mouseAreaMap.mouseX + ":" + mouseAreaMap.mouseY);
+        hereMap.center = hereMap.toCoordinate(Qt.point(mouseAreaMap.mouseX,mouseAreaMap.mouseY))
+    }*/
+
+    mouseAreaMap.onDoubleClicked: {
+        hereMap.center = QtPositioning.coordinate(gpsPosition.position.coordinate.latitude,gpsPosition.position.coordinate.longitude)
+        console.log('Map type -> ' + hereMap.supportedMapTypes[0])
     }
 
     textFieldSearchDisease.onTextChanged: {
@@ -25,18 +35,19 @@ PageDashboardForm {
         fillDashboardModel("*");
     }
 
-    onServerANNRunning: {
-        if(status == "200")
-            serverANNStatus = true;
-        else
-            serverANNStatus = false;
-        console.log("Check server status return -> " + serverANNStatus);
-    }
     onServerFileRunning: {
         if(status == "200")
+        {
             serverFileStatus = true;
+            pageSystemSetting.textServerStatus.color = "green"
+            pageSystemSetting.textServerStatus.text = "EucaImage server is ready."
+        }
         else
+        {
             serverFileStatus = false;
+            pageSystemSetting.textServerStatus.color = "red"
+            pageSystemSetting.textServerStatus.text = "EucaImage server is not reachable!"
+        }
         console.log("Check server status return -> " + serverFileStatus);
     }
 
@@ -156,9 +167,8 @@ PageDashboardForm {
                     return xhr.responseText;
                 }
         }
-        xhr.open("GET", "http://" + pageSystemSetting.textFieldServerIPAddress.text + ":9099/runClassify/" + imageId);
+        xhr.open("GET", "http://" + pageSystemSetting.textFieldServerIPAddress.text + ":3009/runClassify/" + imageId);
         //xhr.open("GET", "http://172.31.171.16:3000/runClassify/" + imageId);
-
         xhr.send();
     }
 
@@ -181,32 +191,13 @@ PageDashboardForm {
                     return xhr.responseText;
                 }
         }
-        xhr.open("GET", "http://" + pageSystemSetting.textFieldServerIPAddress.text + ":9099/getDiseaseType/" + imageId);
+        xhr.open("GET", "http://" + pageSystemSetting.textFieldServerIPAddress.text + ":3009/getDiseaseType/" + imageId);
         //xhr.open("GET", "http://172.31.171.16:3000/getDiseaseType/" + imageId);
 
         xhr.send();
     }
 
-    function checkANNServer(url)
-    {
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function()
-        {
-            if (xhr.readyState === XMLHttpRequest.HEADERS_RECEIVED)
-            {
-                console.log("HEADERS_RECEIVED");
-            }
-            else
-                if(xhr.readyState === XMLHttpRequest.DONE)
-                {
-                    console.log("Get server " + url + " response -> " + xhr.responseText);
-                    serverANNRunning(xhr.responseText);
-                    return xhr.responseText;
-                }
-        }
-        xhr.open("GET", url);
-        xhr.send();
-    }
+
     function checkFileServer(url)
     {
         var xhr = new XMLHttpRequest();
