@@ -148,12 +148,14 @@ void EDDSApi::sendFileReply(QNetworkReply* nr)
     qDebug() << "File upload returning code -> " + statusCodeV.toString();
     QJsonDocument jsonResponse = QJsonDocument::fromJson(statusCodeV.toByteArray());
     QJsonObject jsonObject = jsonResponse.object();
-    QJsonValue statusValue = jsonObject.value("status");
-    if(statusValue == "201")
+    QJsonValue statusValue = jsonObject.value("uploaded");
+    if(statusValue == true)
     {
-        QJsonValue uploadedFilename = jsonObject.value("uploadedFilename");
-        qDebug() << "Upload finised with uploadedFilename -> " + uploadedFilename.toString();
+        QJsonValue uploadedFilename = jsonObject.value("filename");
+        QJsonValue imageId = jsonObject.value("imageId");
+        qDebug() << "Upload finised with filename -> " + uploadedFilename.toString() + " & imageId -> " + imageId.toString();
         updateEucaImageFileUpload(uploadedFilename.toString(), "true","x");
+        updateEucaImageId(imageId.toString(), uploadedFilename.toString());
     }
     else
     {
@@ -492,12 +494,12 @@ void EDDSApi::connectDB()
 
 bool EDDSApi::saveEucaImage(QString imageId, QString filename, QString uploaded, QString diseasetype,QString submitter, QString submit, QString lastedit, QString latitude, QString longitude)
 {
-    qDebug()  << "EDDSApi:: start saving image " + imageId + " with filename " + filename + " to database...";
+    qDebug()  << "EDDSApi:: start saving image " + imageId + " with [" + filename + "," + uploaded + "," + diseasetype + "," + submitter + "," + submit + "," + lastedit + "," + latitude + "," + longitude + "] to database...";
     QSqlQuery qry;
-    if(qry.prepare("INSERT INTO euca_images (imageId, filename, diseasetype, submitter, submit, lastedit, latitude, longitude) VALUES (:imageId, :filename, :diseasetype, :submitter, :submit, :lastedit, :latitude, :longitude)")){
+    if(qry.prepare("INSERT INTO euca_images (imageId, filename, uploaded, diseasetype, submitter, submit, lastedit, latitude, longitude) VALUES (:imageId, :filename, :uploaded, :diseasetype, :submitter, :submit, :lastedit, :latitude, :longitude)")){
         qry.bindValue(":imageId", imageId);
         qry.bindValue(":filename", filename);
-        qry.bindValue("uploaded:", uploaded);
+        qry.bindValue(":uploaded", uploaded);
         qry.bindValue(":diseasetype", diseasetype);
         qry.bindValue(":submitter", submitter);
         qry.bindValue(":submit", submit);
@@ -705,13 +707,13 @@ QString EDDSApi::readEucaImageIdFromFile(QString filename)
         else
         {
             qDebug() << "EDDSApi:: read imageId failed!";
-            return "xxxxxxxxxxxxxxxxx";
+            return "xxxxxxxxxxxxxxxxxxxxxxxx";
         }
     }
     else
     {
         qDebug() << "EDDSApi:: read imageId query broken!";
-        return "xxxxxxxxxxxxxxxxx";
+        return "xxxxxxxxxxxxxxxxxxxxxxxx";
     }
 }
 

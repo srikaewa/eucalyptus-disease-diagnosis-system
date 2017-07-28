@@ -329,7 +329,7 @@ Item {
                         //myEDDSApi.copyFile(myEDDSApi.getImageFilePath(preview.source), eucaFileName+timeNow+".jpg");
                         previewCanvas.save(filename);
                         previewCanvas.clear_canvas();
-                        myEDDSApi.saveEucaImage("xxxxxxxxxxxxxxxxx", myEDDSApi.getImageFileName(filename), "false", 'u', firebaseObject.email, todayDate, todayDate, gpsPosition.position.coordinate.latitude, gpsPosition.position.coordinate.longitude);
+                        myEDDSApi.saveEucaImage("xxxxxxxxxxxxxxxxxxxxxxxx", myEDDSApi.getImageFileName(filename), "false", 'u', firebaseObject.email, todayDate, todayDate, gpsPosition.position.coordinate.latitude, gpsPosition.position.coordinate.longitude);
                         pageDashboard.fillDashboardModel("*");
                     }
                     ToolTip{
