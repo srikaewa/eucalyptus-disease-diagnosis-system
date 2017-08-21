@@ -60,6 +60,7 @@ Item {
     property string imageId: ""
     property date todayDate: new Date()
     property string filename: ""
+    property string original_filename: ""
     property string eucaFileName: myEDDSApi.getDefaultHomePath()+"/eucaPhoto-"+pageUser.textFieldEmail.text+'-';
 
 
@@ -216,7 +217,7 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     //photoPreview.visible = false;
-                    swipeView.interactive = true;
+                    //swipeView.interactive = true;
                     previewCanvas.clear_canvas();
                     mouseReleased = false;
                     mouseFirstPressed = true;
@@ -232,11 +233,9 @@ Item {
         }
 
         Column{
-            anchors.right: parent.right
-            anchors.leftMargin: 10
+            anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 20
-            width: Screen.desktopAvailableWidth * 0.25
             Text{
                 id: textFileName
                 text: myEDDSApi.getImageFileName(preview.source)
@@ -319,17 +318,19 @@ Item {
                     id: mouseAreaCheck
                     anchors.fill: parent
                     onClicked: {
-                        swipeView.interactive = true;
+                        //swipeView.interactive = true;
                         pageDashboard.pop();
                         todayDate = new Date();
-                        var timeNow = Date.now()
-                        filename = eucaFileName+timeNow+".jpg";
+                        var timeNow = Date.now();
+                        filename = eucaFileName+timeNow+".png";
+                        original_filename = eucaFileName+timeNow+"_original.png";
                         /**** copy file to app home directory and format filename ***/
-                        console.log("Submitting file -> "+filename);                        
-                        //myEDDSApi.copyFile(myEDDSApi.getImageFilePath(preview.source), eucaFileName+timeNow+".jpg");
+                        console.log("Submitting file["+filename+"] from original file[" + myEDDSApi.getImageFilePath(preview.source) + "]");
                         previewCanvas.save(filename);
                         previewCanvas.clear_canvas();
-                        myEDDSApi.saveEucaImage("xxxxxxxxxxxxxxxxxxxxxxxx", myEDDSApi.getImageFileName(filename), "false", 'u', firebaseObject.email, todayDate, todayDate, gpsPosition.position.coordinate.latitude, gpsPosition.position.coordinate.longitude);
+                        /**** save original file to matched filename ****/
+                        myEDDSApi.copyFile(myEDDSApi.getImageFilePath(preview.source), original_filename);
+                        myEDDSApi.saveEucaImage("xxxxxxxxxxxxxxxxxxxxxxxx", myEDDSApi.getImageFileName(filename), myEDDSApi.getImageFileName(original_filename) ,"false", 'u', firebaseObject.email, todayDate, todayDate, gpsPosition.position.coordinate.latitude, gpsPosition.position.coordinate.longitude);
                         pageDashboard.fillDashboardModel("*");
                     }
                     ToolTip{

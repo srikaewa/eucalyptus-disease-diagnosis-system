@@ -23,7 +23,8 @@ public:
     QString fileNameFromGallery() const;
     void setFileNameFromGallery(const QString &fileNameFromGallery);
 
-    Q_INVOKABLE int sendImageFile(QString file_path, QString serverIP);
+    Q_INVOKABLE int sendImageFile(QString file_path, QString submitter, QString latitude, QString longitude, QString serverIP);
+    Q_INVOKABLE int sendImageFile2(QString file_path, QString submitter, QString serverIP);
     Q_INVOKABLE QByteArray readImageFile(QString file_path);
     Q_INVOKABLE QString getImageFileName(QString file_path);
     Q_INVOKABLE QString getImageFilePath(QString file_path);
@@ -39,10 +40,13 @@ public:
     Q_INVOKABLE bool isFileProcessed(QString filename);
 
     Q_INVOKABLE QString getDiseaseType(QString imageId);
+    Q_INVOKABLE QStringList getDiseaseList();
+    Q_INVOKABLE int getDiseaseTypeNumber();
 
     void connectDB();
 
-    Q_INVOKABLE bool saveEucaImage(QString imageId, QString filename, QString uploaded, QString diseasetytpe,QString submitter, QString submit, QString lastedit, QString latitude, QString longitude);
+    Q_INVOKABLE bool saveEucaImage(QString imageId, QString filename, QString originalfilename, QString uploaded, QString diseasetytpe,QString submitter, QString submit, QString lastedit, QString latitude, QString longitude);
+    Q_INVOKABLE bool deleteEucaImage(QString imageId);
     Q_INVOKABLE bool updateEucaImageId(QString imageId, QString fileName);
     Q_INVOKABLE bool updateEucaImageFileUpload(QString filename, QString uploaded, QString diseasetype);
     Q_INVOKABLE bool updateEucaImageFileProcess(QString imageId, QString processed);
@@ -57,6 +61,8 @@ public:
     Q_INVOKABLE int readRunClassifyCount(QString imageId);
     Q_INVOKABLE bool setRunClassifyCount(QString imageId, QString count);
 
+    Q_INVOKABLE QString getBuildNumber();
+
     Q_INVOKABLE void buscaImagem();
     QString m_fileNameFromGallery;
 
@@ -68,6 +74,10 @@ public:
     bool m_fileUploaded = false;
     bool m_fileProcessed = false;
     QString m_diseaseType = "x";
+    QList<QString> m_diseaseList;
+    int m_diseaseTypeNumber;
+
+    QString m_buildNumber = "201708201109";
 
 //    QString m_selectedFileName = "#";
 

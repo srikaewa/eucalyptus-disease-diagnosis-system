@@ -49,5 +49,26 @@
         <file>CameraPreview.qml</file>
         <file>images/ic_camera_white_48dp.png</file>
         <file>images/ic_arrow_back_black_48dp.png</file>
+        <file>PageEucaDashboard.qml</file>
+        <file>PageEucaDashboardForm.ui.qml</file>
+        <file>DiagnosisDetail.qml</file>
+        <file>Info.qml</file>
+        <file>images/ic_info_black_48dp.png</file>
+        <file>images/ic_info_white_48dp.png</file>
+        <file>images/ic_today_black_48dp.png</file>
+        <file>images/ic_image_black_48dp.png</file>
+        <file>images/ic_place_black_48dp.png</file>
+        <file>images/currentPositionMarker.png</file>
+        <file>images/red-location-map-pin-icon-5.png</file>
+        <file>images/ic_satellite_black_48dp.png</file>
+        <file>images/ic_delete_white_48dp.png</file>
+        <file>EditServer.qml</file>
+        <file>images/ic_update_black_48dp.png</file>
+        <file>DrawerMenu.qml</file>
+        <file>images/ic_account_circle_black_48dp.png</file>
+        <file>images/Eucalyptus.png</file>
+        <file>images/ic_account_circle_white_48dp.png</file>
+        <file>images/ic_exit_to_app_black_48dp.png</file>
+        <file>images/ic_description_black_48dp.png</file>
     </qresource>
 </RCC>

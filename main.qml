@@ -33,6 +33,10 @@ ApplicationWindow {
         id: controlPanelSlidingMenu
     }*/
 
+    DrawerMenu{
+        id: drawerMenu
+    }
+
     SwipeView {
         id: swipeView
         anchors.fill: parent
@@ -42,6 +46,10 @@ ApplicationWindow {
         PageUser{
             id:pageUser
         }
+
+        //PageEucaDashboard{
+        //    id: pageEucaDashboard
+        //}
 
         PageDashboard{
             id: pageDashboard

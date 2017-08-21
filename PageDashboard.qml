@@ -17,10 +17,10 @@ PageDashboardForm {
         hereMap.center = hereMap.toCoordinate(Qt.point(mouseAreaMap.mouseX,mouseAreaMap.mouseY))
     }*/
 
-    mouseAreaMap.onDoubleClicked: {
+    /*mouseAreaMap.onDoubleClicked: {
         hereMap.center = QtPositioning.coordinate(gpsPosition.position.coordinate.latitude,gpsPosition.position.coordinate.longitude)
         console.log('Map type -> ' + hereMap.supportedMapTypes[0])
-    }
+    }*/
 
     textFieldSearchDisease.onTextChanged: {
         applyFilter(textFieldSearchDisease.text);
@@ -53,6 +53,7 @@ PageDashboardForm {
 
     controlCenter.cameraButton.onClicked: {
         cameraPreview.visible = true;
+        swipeView.interactive = false;
         pageDashboard.push(cameraPreviewStack);
     }
 
@@ -83,10 +84,10 @@ PageDashboardForm {
         dashboardListModel.clear();
         for(var i = 0; i < object.euca_image.length; i++)
         {
-            console.log("Read euca data -> " + object.euca_image[i].imageId + ":" + object.euca_image[i].diseasetype);
+            console.log("Read euca data -> " + object.euca_image[i].imageId + ":" + object.euca_image[i].diseasetype + " with original filename[" + object.euca_image[i].originalfilename + "]");
             dashboardListModel.append(object.euca_image[i]);
         }
-        console.log("Dashboard list model -> " + dashboardListModel)
+        //console.log("Dashboard list model -> " + dashboardListModel)
     }
 
 /*    function reload()
@@ -113,16 +114,16 @@ PageDashboardForm {
     }
 
 
-    function postToEDDS(filename, uploaded, diseasetype, stage, level, submitter, submit, lastedit, latitude, longitude, elapsetime){
+    function postToEDDS(imageId, submitter, lastedit, latitude, longitude){
         console.log('sending POST to EDDS...');
         var http = new XMLHttpRequest();
-        var url = "http://" + pageSystemSetting.textFieldServerIPAddress.text + ":9099/eddsapi/euca_images";
+        var url = "http://" + pageSystemSetting.textFieldServerIPAddress.text + ":3009/eucaImages/" + imageId;
         //var url = "http://172.31.171.16:3000/eddsapi/euca_images";
-        var params = '{"filename":"' +filename+ '","uploaded":'+uploaded +',"diseasetype":"'+ diseasetype + '","stage":"' + stage + '","level":"' + level + '","submitter":"'+ submitter +'","submit":"'+submit+'","lastedit":"' + lastedit + '","latitude":"'+latitude+'","longitude":"'+longitude+'","elapsetime":"' + elapsetime + '"}';
+        var params = '{"submitter":"'+ submitter+ '","lastedit":"' + lastedit + '","latitude":"'+latitude+'","longitude":"'+longitude + '"}';
 
         console.log('PARAMS: ' + params);
 
-        http.open("POST", url, true);
+        http.open("PUT", url, true);
 
         // Send the proper header information along with the request
         //http.setRequestHeader("Content-type", "application/raw");

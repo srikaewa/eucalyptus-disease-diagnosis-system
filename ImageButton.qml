@@ -3,6 +3,7 @@ import QtQuick 2.0
 import QtQuick 2.0
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Styles 1.4
+import QtQuick.Window 2.3
 
 Rectangle {
     id: button
@@ -14,6 +15,7 @@ Rectangle {
     property string text
     //property color color: "white"
     property string imageFile
+    property int imageSize: 28
 
     width : 144
     height: 70
@@ -22,8 +24,8 @@ Rectangle {
     BorderImage {
         id: buttonImage
         source: button.imageFile
-        width: 36
-        height: 36
+        width: imageSize
+        height: width
         anchors.centerIn: parent
     }
 

@@ -16,8 +16,8 @@ import Qt.labs.settings 1.0
 //import QtGraphicalEffects 1.0
 Item {
     id: pageUserForm
-    width: 480
-    height: 800
+    width: Screen.availableDesktopWidth * Screen.devicePixelRatio
+    height: Screen.availableDesktopHeight * Screen.devicePixelRatio
     property alias pageUserForm: pageUserForm
     property alias buttonSignIn: buttonSignIn
     property alias buttonSignUp: buttonSignUp
@@ -48,12 +48,11 @@ Item {
             width: parent.width
             height: parent.height
             flickableDirection: Flickable.VerticalFlick
-            contentHeight: columnWrapper.height * 1.2
+            contentHeight: parent.height
 
             ColumnLayout {
                 id: columnWrapper
-                spacing: 20
-                anchors {
+                anchors{
                     centerIn: parent
                 }
 
@@ -63,40 +62,45 @@ Item {
                 //    margins: 20
                 //    horizontalCenter: parent.horizontalCenter
                 //}
-                Row {
+                GridLayout {
                     //Layout.fillWidth: true
                     Layout.alignment: Qt.AlignHCenter
+                    columns: 2
                     Image {
                         source: "/images/SUANKITTI.png"
                         height: 120
                         width: 240
+                        Layout.preferredWidth: label.width/2
                         fillMode: Image.PreserveAspectFit
-                        MouseArea {
+                        /*MouseArea {
                             anchors.fill: parent
                             onClicked: firebaseObject.Initialize()
-                        }
+                        }*/
                     }
                     Image {
                         source: "/images/EUTECH.png"
                         height: 120
                         width: 240
+                        Layout.preferredWidth: label.width/2
                         fillMode: Image.PreserveAspectFit
-                        MouseArea {
+                        /*MouseArea {
                             anchors.fill: parent
-                            onClicked: firebaseObject.checkUserCreation();
-                        }
+                            onClicked: firebaseObject.checkUserCreation()
+                        }*/
                     }
-                }
 
-                Label {
-                    id: label
-                    width: parent.width
-                    height: 30
-                    text: qsTr("EUCALYPTUS DISEASE DIAGNOSIS SYSTEM\n")
-                    font.family: fontRegular.name
-                    font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
-                    font.bold: true
-                    Layout.alignment: Qt.AlignHCenter
+                    Label {
+                        id: label
+                        width: Screen.availableDesktopWidth
+                        height: 30
+                        Layout.columnSpan: 2
+                        text: qsTr("EUCALYPTUS DISEASE DIAGNOSIS SYSTEM")
+                        font.family: fontRegular.name
+                        font.pixelSize: 40 / Screen.devicePixelRatio
+                        font.bold: true
+                        Layout.alignment: Qt.AlignHCenter
+                    }
+
                 }
 
                 /*RowLayout{
@@ -169,76 +173,69 @@ Item {
                 //    font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
                 //    font.bold: true
                 // }
-                RowLayout {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignHCenter
+                GridLayout {
+                    columns: 2
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.preferredWidth: label.width
                     Image {
                         id: imageEmail
-                        Layout.preferredWidth: 36
-                        Layout.preferredHeight: 36
+                        Layout.preferredWidth: 42 / Screen.devicePixelRatio
+                        Layout.preferredHeight: 42 / Screen.devicePixelRatio
                         source: "/images/ic_email_black_48dp.png"
                         fillMode: Image.PreserveAspectFit
                     }
 
                     TextField {
                         id: textFieldEmail
-                        width: parent.width
-                        height: 40
-                        text: qsTr("")
+                        width: label.width - imageEmail.width
+                        height: 32
+                        text: "srikaewa@gmail.com"
                         placeholderText: "Email"
                         font.family: fontRegular.name
-                        font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
-                        Layout.minimumWidth: 380
-                        Layout.fillWidth: true
+                        font.pixelSize: label.font.pixelSize
+                        Layout.preferredWidth: label.width - imageEmail.width
                     }
-                }
 
-                //Label{
-                //    text: "Password "
-                //    font.family: fontRegular.name
-                //    font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
-                //    font.bold: true
-                //}
-                RowLayout {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignHCenter
+                    //Label{
+                    //    text: "Password "
+                    //    font.family: fontRegular.name
+                    //    font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
+                    //    font.bold: true
+                    //}
                     Image {
                         id: imageLock
-                        Layout.preferredWidth: 36
-                        Layout.preferredHeight: 36
+                        Layout.preferredWidth: 42 / Screen.devicePixelRatio
+                        Layout.preferredHeight: 42 / Screen.devicePixelRatio
                         source: "/images/ic_lock_black_48dp.png"
                         fillMode: Image.PreserveAspectFit
                     }
 
                     TextField {
                         id: textFieldPassword
-                        width: parent.width
-                        height: 40
-                        text: qsTr("")
+                        width: label.width - imageLock.width
+                        height: 32
+                        text: "12345678"
                         placeholderText: "Password..."
                         echoMode: TextInput.Password
                         font.family: fontRegular.name
-                        font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
-                        Layout.minimumWidth: 380
-                        Layout.fillWidth: true
+                        font.pixelSize: label.font.pixelSize
+                        Layout.preferredWidth: label.width - imageLock.width
                     }
                 }
 
-                RowLayout {
+                RowLayout{
                     Layout.alignment: Qt.AlignHCenter
+                    spacing: 20
                     Button {
                         id: buttonSignIn
                         width: 134
                         height: 40
                         text: "Sign In"
                         font.family: fontRegular.name
-                        font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
+                        font.pixelSize: label.font.pixelSize
                         flat: true
                     }
 
-                    Label {
-                        text: "       "
-                    }
 
                     Button {
                         id: buttonSignUp
@@ -246,19 +243,17 @@ Item {
                         height: 40
                         text: "Sign Up"
                         font.family: fontRegular.name
-                        font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
+                        font.pixelSize: label.font.pixelSize
                         flat: true
                     }
-                    Label {
-                        text: "       "
-                    }
+
                     Button {
                         id: buttonRememberSignIn
                         width: 134
                         height: 40
                         text: "Remember me"
                         font.family: fontRegular.name
-                        font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
+                        font.pixelSize: label.font.pixelSize
                         flat: true
                         checkable: true
                         checked: false

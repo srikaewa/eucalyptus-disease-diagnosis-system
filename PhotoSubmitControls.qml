@@ -193,31 +193,6 @@ FocusScope {
 
         }
 
-        function postToEDDS(){
-            console.log('sending POST to EDDS...');
-            var http = new XMLHttpRequest();
-            var url = "http://" + pageSystemSetting.serverIPAddress + ":9099/eddsapi/euca_images";
-            var params = '{"filename":"Test888","diseasetype":"Crypto","submitter":"Me","submit":"Tomorrow","lastedit":"Tomorrow"}';
-
-            http.open("POST", url, true);
-
-            // Send the proper header information along with the request
-            //http.setRequestHeader("Content-type", "application/raw");
-            //http.setRequestHeader("Content-Length", params.length);// all browser wont support Refused to set unsafe header "Content-Length"
-            //http.setRequestHeader("Connection", "close");//Refused to set unsafe header "Connection"
-
-            // Call a function when the state
-            http.onreadystatechange = function() {
-               if(http.readyState == 4 && http.status == 200) {
-                   console.log("POST response -> " + http.responseText);
-               }
-               else
-                   console.log("POST status -> " + http.status);
-            }
-
-            http.send(params);
-        }
-
         function request(image_file) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
