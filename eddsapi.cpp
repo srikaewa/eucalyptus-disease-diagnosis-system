@@ -121,7 +121,7 @@ int EDDSApi::sendImageFile(QString file_path, QString submitter, QString latitud
     data.append("--" + bound + "\r\n");
     bb2 = "Content-Disposition: form-data; name=" % QChar('"') % "submitter"+QChar('"') % "; filename=" % QChar('"');
     bb2 = "Content-Disposition: form-data; name=" % QChar('"') % "userPhoto"+QChar('"') % "; filename=" % QChar('"');
-    //qDebug() << "bb2 = " + bb2;
+    qDebug() << "bb2 = " + bb2;
     data.append(bb2.toUtf8());
     data.append(file_name);
     data.append("\"\r\n");
@@ -434,6 +434,11 @@ QString EDDSApi::getImageFileName(QString file_path)
     return file_path.section("/",-1,-1);
 }
 
+QString EDDSApi::getFileExtension(QString file_path)
+{
+    return file_path.section(".",-1).toLower();
+}
+
 QByteArray EDDSApi::readImageFile(QString file_path)
 {
     QFile file(file_path);
@@ -544,14 +549,15 @@ void EDDSApi::connectDB()
     }
 }
 
-bool EDDSApi::saveEucaImage(QString imageId, QString filename, QString originalfilename, QString uploaded, QString diseasetype,QString submitter, QString submit, QString lastedit, QString latitude, QString longitude)
+bool EDDSApi::saveEucaImage(QString imageId, QString filename, QString originalfilename, QString displayfilename, QString uploaded, QString diseasetype,QString submitter, QString submit, QString lastedit, QString latitude, QString longitude)
 {
-    qDebug()  << "EDDSApi:: start saving image " + imageId + " with [" + filename + "," + originalfilename + "," + uploaded + "," + diseasetype + "," + submitter + "," + submit + "," + lastedit + "," + latitude + "," + longitude + "] to database...";
+    qDebug()  << "EDDSApi:: start saving image " + imageId + " with [" + filename + "," + originalfilename + "," + displayfilename + "," + uploaded + "," + diseasetype + "," + submitter + "," + submit + "," + lastedit + "," + latitude + "," + longitude + "] to database...";
     QSqlQuery qry;
-    if(qry.prepare("INSERT INTO euca_images (imageId, filename, originalfilename, uploaded, diseasetype, submitter, submit, lastedit, latitude, longitude) VALUES (:imageId, :filename, :originalfilename, :uploaded, :diseasetype, :submitter, :submit, :lastedit, :latitude, :longitude)")){
+    if(qry.prepare("INSERT INTO euca_images (imageId, filename, originalfilename, displayfilename, uploaded, diseasetype, submitter, submit, lastedit, latitude, longitude) VALUES (:imageId, :filename, :originalfilename, :displayfilename, :uploaded, :diseasetype, :submitter, :submit, :lastedit, :latitude, :longitude)")){
         qry.bindValue(":imageId", imageId);
         qry.bindValue(":filename", filename);
         qry.bindValue(":originalfilename", originalfilename);
+        qry.bindValue(":displayfilename", displayfilename);
         qry.bindValue(":uploaded", uploaded);
         qry.bindValue(":diseasetype", diseasetype);
         qry.bindValue(":submitter", submitter);
@@ -824,7 +830,8 @@ QString EDDSApi::readEucaImage(QString type)
                 recordObject.insert("imageId", qry.value(qry.record().indexOf("imageId")).toString());
                 //qDebug() << "imageId: " + eucaTemp.value(0);
                 recordObject.insert("filename", qry.value(qry.record().indexOf("filename")).toString());
-                recordObject.insert("originalfilename", qry.value(qry.record().indexOf("originalfilename")).toString());               
+                recordObject.insert("originalfilename", qry.value(qry.record().indexOf("originalfilename")).toString());
+                recordObject.insert("displayfilename", qry.value(qry.record().indexOf("displayfilename")).toString());
                 recordObject.insert("diseasetype", qry.value(qry.record().indexOf("diseasetype")).toString());
                 //qDebug() << "diseasetype: " + eucaTemp.value(2);
                 recordObject.insert("stage", qry.value(qry.record().indexOf("stage")).toString());

@@ -280,7 +280,7 @@ StackView {
                         spacing: 10
                         Image {
                             source: "file://" + myEDDSApi.getDefaultHomePath(
-                                        ) + "/" + filename
+                                        ) + "/" + displayfilename
                             width: 200 / Screen.devicePixelRatio
                             height: 200 / Screen.devicePixelRatio
                             sourceSize.width: width
@@ -300,7 +300,7 @@ StackView {
                                     diagnosisDetail.visible = true
                                     diagnosisDetail.source = "file://"
                                             + myEDDSApi.getDefaultHomePath(
-                                                ) + "/" + filename
+                                                ) + "/" + displayfilename
                                     diagnosisDetail.textDiseaseType.text = diseasetype
                                     diagnosisDetail.textDiseaseStage.text = "Stage: " + stage
                                     diagnosisDetail.textDiseaseLevel.text = "Level: " + level
@@ -338,7 +338,7 @@ StackView {
                                                         imageId, "1")
                                             runClassify(imageId)
                                         } else {
-                                            if (count < 10) {
+                                            if (count < 20) {
                                                 console.log("Call getDiseaseType from server")
                                                 pageDashboard.getDiseaseType(
                                                             imageId)
@@ -386,7 +386,7 @@ StackView {
                                                         latitude, longitude,
                                                         pageSystemSetting.textFieldServerIPAddress.text)
                                         } else {
-                                            if (count < 8) {
+                                            if (count < 20) {
                                                 console.log("Is file " + _filename + " uploaded??")
                                                 if (myEDDSApi.isFileUploaded(
                                                             _filename)) {

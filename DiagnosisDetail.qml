@@ -117,11 +117,11 @@ Item {
                         var d = new Date(dashboardListView.model.get(imageListIndex).lastedit);
                         console.log("Select date -> " + d.toLocaleDateString());
                         info.imageOriginalSource = "file://" + myEDDSApi.getDefaultHomePath() + "/" + dashboardListView.model.get(imageListIndex).originalfilename;
-                        info.imageDiseaseMaskSource = "file://" + myEDDSApi.getDefaultHomePath() + "/" + dashboardListView.model.get(imageListIndex).filename;
+                        info.imageDiseaseMaskSource = "file://" + myEDDSApi.getDefaultHomePath() + "/" + dashboardListView.model.get(imageListIndex).displayfilename;
                         console.log("Original image file -> " + info.imageOriginalSource)
                         info.textDescription.text = dashboardListView.model.get(imageListIndex).diseasetype + " - Stage: " + dashboardListView.model.get(imageListIndex).stage + ", Level: " + dashboardListView.model.get(imageListIndex).level;
                         info.textLastedit.text = dashboardListView.model.get(imageListIndex).lastedit;
-                        info.textFilename.text = dashboardListView.model.get(imageListIndex).filename;
+                        info.textFilename.text = dashboardListView.model.get(imageListIndex).displayfilename;
                         info.textServerInfo.text = dashboardListView.model.get(imageListIndex).imageId;
                         info.textElapseTime.text = dashboardListView.model.get(imageListIndex).elapsetime + " s";
                         info.textInfoLatitude.text = dashboardListView.model.get(imageListIndex).latitude

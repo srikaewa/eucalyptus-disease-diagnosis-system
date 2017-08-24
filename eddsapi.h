@@ -31,6 +31,7 @@ public:
     Q_INVOKABLE QString getImageFilePath2(QString file_path, QString file_name);
     Q_INVOKABLE QString getDefaultImagePath();
     Q_INVOKABLE QString getDefaultHomePath();
+    Q_INVOKABLE QString getFileExtension(QString file_path);
     QByteArray buildUploadString(QString file_path);
     Q_INVOKABLE bool copyFile(QString original_file_path, QString destination_directory);
     Q_INVOKABLE bool deleteFile(QString filename);
@@ -45,7 +46,7 @@ public:
 
     void connectDB();
 
-    Q_INVOKABLE bool saveEucaImage(QString imageId, QString filename, QString originalfilename, QString uploaded, QString diseasetytpe,QString submitter, QString submit, QString lastedit, QString latitude, QString longitude);
+    Q_INVOKABLE bool saveEucaImage(QString imageId, QString filename, QString originalfilename, QString displayfilename, QString uploaded, QString diseasetytpe,QString submitter, QString submit, QString lastedit, QString latitude, QString longitude);
     Q_INVOKABLE bool deleteEucaImage(QString imageId);
     Q_INVOKABLE bool updateEucaImageId(QString imageId, QString fileName);
     Q_INVOKABLE bool updateEucaImageFileUpload(QString filename, QString uploaded, QString diseasetype);

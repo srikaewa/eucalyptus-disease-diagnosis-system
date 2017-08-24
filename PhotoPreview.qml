@@ -61,6 +61,7 @@ Item {
     property date todayDate: new Date()
     property string filename: ""
     property string original_filename: ""
+    property string display_filename: ""
     property string eucaFileName: myEDDSApi.getDefaultHomePath()+"/eucaPhoto-"+pageUser.textFieldEmail.text+'-';
 
 
@@ -322,15 +323,17 @@ Item {
                         pageDashboard.pop();
                         todayDate = new Date();
                         var timeNow = Date.now();
-                        filename = eucaFileName+timeNow+".png";
-                        original_filename = eucaFileName+timeNow+"_original.png";
+                        filename = eucaFileName+timeNow+".tif";
+                        original_filename = eucaFileName+timeNow+"_original" + myEDDSApi.getFileExtension(preview.source);
+                        display_filename = eucaFileName+timeNow+".jpg";
                         /**** copy file to app home directory and format filename ***/
                         console.log("Submitting file["+filename+"] from original file[" + myEDDSApi.getImageFilePath(preview.source) + "]");
                         previewCanvas.save(filename);
+                        previewCanvas.save(display_filename);
                         previewCanvas.clear_canvas();
                         /**** save original file to matched filename ****/
                         myEDDSApi.copyFile(myEDDSApi.getImageFilePath(preview.source), original_filename);
-                        myEDDSApi.saveEucaImage("xxxxxxxxxxxxxxxxxxxxxxxx", myEDDSApi.getImageFileName(filename), myEDDSApi.getImageFileName(original_filename) ,"false", 'u', firebaseObject.email, todayDate, todayDate, gpsPosition.position.coordinate.latitude, gpsPosition.position.coordinate.longitude);
+                        myEDDSApi.saveEucaImage("xxxxxxxxxxxxxxxxxxxxxxxx", myEDDSApi.getImageFileName(filename), myEDDSApi.getImageFileName(original_filename), myEDDSApi.getImageFileName(display_filename) ,"false", 'u', firebaseObject.email, todayDate, todayDate, gpsPosition.position.coordinate.latitude, gpsPosition.position.coordinate.longitude);
                         pageDashboard.fillDashboardModel("*");
                     }
                     ToolTip{
