@@ -218,7 +218,7 @@ StackView {
                     }
 
                     Text {
-                        text: "Actual width"
+                        text: "Actual Resolution"
                         font.family: fontRegular.name
                         font.pixelSize: 18
                         Text {
@@ -227,14 +227,14 @@ StackView {
                                 top: parent.bottom
                             }
                             color: "#757575"
-                            text: Screen.desktopAvailableWidth * Screen.devicePixelRatio
+                            text: screenPixelWidth + "x" + screenPixelHeight
                             font.family: fontRegular.name
                             font.pixelSize: 16
                         }
                     }
 
                     Text {
-                        text: "Actual height"
+                        text: "Physical Dimension"
                         font.family: fontRegular.name
                         font.pixelSize: 18
                         Text {
@@ -243,7 +243,7 @@ StackView {
                                 top: parent.bottom
                             }
                             color: "#757575"
-                            text: Screen.desktopAvailableHeight * Screen.devicePixelRatio
+                            text: screenInchWidth.toFixed(1) + "x" + screenInchHeight.toFixed(1) + " (inch x inch)"
                             font.family: fontRegular.name
                             font.pixelSize: 16
                         }
@@ -276,6 +276,22 @@ StackView {
                             }
                             color: "#757575"
                             text: Screen.pixelDensity
+                            font.family: fontRegular.name
+                            font.pixelSize: 16
+                        }
+                    }
+
+                    Text {
+                        text: "Diagonal"
+                        font.family: fontRegular.name
+                        font.pixelSize: 18
+                        Text {
+                            id: textDiagonal
+                            anchors {
+                                top: parent.bottom
+                            }
+                            color: "#757575"
+                            text: screenDiagonal.toFixed(1) + " (inch)"
                             font.family: fontRegular.name
                             font.pixelSize: 16
                         }

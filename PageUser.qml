@@ -69,6 +69,8 @@ PageUserForm {
             //controlPanelSlidingMenu.drawer.dragMargin = 10;
             //headerToolbar.visible = true;
             //swipeView.interactive = false;
+            myEDDSApi.setSubmitter("123");
+            pageDashboard.fillDateListModel("*");
             swipeView.setCurrentIndex(1);
             drawerMenu.drawer.dragMargin = 10;
         }
@@ -94,6 +96,8 @@ PageUserForm {
                         //controlPanelSlidingMenu.drawer.dragMargin = 10;
                         //headerToolbar.visible = true;
                         //swipeView.interactive = false;
+                        myEDDSApi.setSubmitter(textFieldEmail.text);
+                        pageDashboard.fillDateListModel("*");
                         swipeView.setCurrentIndex(1);
                         drawerMenu.drawer.dragMargin = 10;
 
@@ -104,6 +108,7 @@ PageUserForm {
                         labelUserLoginStatus.color = "red";
                         buttonSignUp.enabled = true;
                         buttonRememberSignIn.enabled = false;
+                        myEDDSApi.setSubmitter("");
                         drawerMenu.drawer.dragMargin = 0;
                         //swipeView.interactive = false;
                     }
@@ -137,6 +142,7 @@ PageUserForm {
         buttonRememberSignIn.enabled = false;
         //headerToolbar.visible = false;
         //swipeView.interactive = false;
+        myEDDSApi.setSubmitter("");
         swipeView.setCurrentIndex(0);
         drawerMenu.drawer.dragMargin = 0;
     }

@@ -43,6 +43,7 @@ public:
     Q_INVOKABLE QString getDiseaseType(QString imageId);
     Q_INVOKABLE QStringList getDiseaseList();
     Q_INVOKABLE int getDiseaseTypeNumber();
+    Q_INVOKABLE QString getDateList(QString type);
 
     void connectDB();
 
@@ -53,6 +54,7 @@ public:
     Q_INVOKABLE bool updateEucaImageFileProcess(QString imageId, QString processed);
     Q_INVOKABLE QString readEucaImageIdFromFile(QString filename);
     Q_INVOKABLE QString readEucaImage(QString type);
+    Q_INVOKABLE QString readEucaImage(QString type, QString fdate);
     Q_INVOKABLE bool updateDiseaseType2Filename(QString filename, QString diseaseType, QString stage, QString level, QString elapsetime);
     Q_INVOKABLE bool updateDiseaseType(QString imageId, QString diseaseType, QString stage, QString level, QString lastedit, QString elapsetime);
     Q_INVOKABLE QString readDiseaseType(QString imageId);
@@ -61,6 +63,7 @@ public:
     Q_INVOKABLE bool setSendFileCount(QString filename, QString count);
     Q_INVOKABLE int readRunClassifyCount(QString imageId);
     Q_INVOKABLE bool setRunClassifyCount(QString imageId, QString count);
+    Q_INVOKABLE void setSubmitter(QString submitter);
 
     Q_INVOKABLE QString getBuildNumber();
 
@@ -76,7 +79,9 @@ public:
     bool m_fileProcessed = false;
     QString m_diseaseType = "x";
     QList<QString> m_diseaseList;
+    QList<QString> m_dateList;
     int m_diseaseTypeNumber;
+    QString m_submitter;
 
     QString m_buildNumber = "201708201109";
 

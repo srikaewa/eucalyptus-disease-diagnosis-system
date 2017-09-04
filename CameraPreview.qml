@@ -53,6 +53,7 @@ Item {
             anchors.fill: parent
             onClicked: {
                 //swipeView.interactive = true;
+                controlCenter.visible = true;
                 pageDashboard.pop();
             }
         }

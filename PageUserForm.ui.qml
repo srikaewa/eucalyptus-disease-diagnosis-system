@@ -266,7 +266,7 @@ Item {
                     text: "Please sign in to begin using app..."
                     font.family: fontRegular.name
                     font.italic: true
-                    font.pixelSize: (Screen.primaryOrientation == Qt.LandscapeOrientation ? flickableUserForm.height * 0.04 : flickableUserForm.height * 0.02)
+                    font.pixelSize: label.font.pixelSize * 0.75
                     Layout.alignment: Qt.AlignHCenter
                 }
 

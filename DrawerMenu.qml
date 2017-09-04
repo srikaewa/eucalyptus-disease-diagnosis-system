@@ -59,6 +59,57 @@ Item {
             }
         }
 
+        Image{
+            source: "/images/ic_settings_black_48dp.png"
+            width: 28
+            height: 28
+            Layout.preferredWidth: width
+            Layout.preferredHeight: height
+            Layout.leftMargin: 20
+        }
+
+        Text{
+            text: "Settings"
+            font.family: fontRegular.name
+            font.pixelSize: bodyFontSize
+            color: "#000000"
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    swipeView.setCurrentIndex(2)
+                    drawer.close();
+                }
+            }
+        }
+
+        Image{
+            source: "/images/ic_help_black_48dp.png"
+            width: 28
+            height: 28
+            Layout.preferredWidth: width
+            Layout.preferredHeight: height
+            Layout.leftMargin: 20
+        }
+
+        Text{
+            text: "Help"
+            font.family: fontRegular.name
+            font.pixelSize: bodyFontSize
+            color: "#000000"
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    //swipeView.setCurrentIndex(2)
+                    drawer.close();
+                }
+            }
+        }
+
+
        Image{
            source: "/images/ic_exit_to_app_black_48dp.png"
            width: 28

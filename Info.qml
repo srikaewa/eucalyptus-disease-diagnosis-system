@@ -13,6 +13,7 @@ Item {
 
     property alias infoPage: infoPage
     property alias textLastedit: textLastedit
+    property alias textSubmit: textSubmit
     property alias textFilename: textFilename
     property alias textDescription: textDescription
     property alias textInfoLatitude: textInfoLatitude
@@ -65,7 +66,7 @@ Item {
         } */
     }
 
-    /*Plugin {
+    Plugin {
         id: mapInfoPlugin
         name: "here"
         PluginParameter {
@@ -76,7 +77,7 @@ Item {
             name: "here.token"
             value: "80gzJuzovEcRTBGgxXXSKw"
         }
-    }*/
+    }
 
     Flickable {
         boundsBehavior: Flickable.DragAndOvershootBounds
@@ -196,7 +197,7 @@ Item {
                     Layout.leftMargin: 30
                 }
             Text{
-                    id: textLastedit
+                    id: textSubmit
                     font.family: fontRegular.name
                     font.pixelSize: bodyFontSize
                     color: "#757575"
@@ -231,6 +232,22 @@ Item {
                 }
             Text{
                     id: textServerInfo
+                    font.family: fontRegular.name
+                    font.pixelSize: bodyFontSize
+                    color: "#757575"
+                    Layout.fillWidth: true
+                }
+            Image{
+                    source: "/images/ic_cloud_done_black_48dp.png"
+                    width: imageSize
+                    height: width
+                    Layout.preferredWidth: imageSize
+                    Layout.preferredHeight: imageSize
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.leftMargin: 30
+                }
+            Text{
+                    id: textLastedit
                     font.family: fontRegular.name
                     font.pixelSize: bodyFontSize
                     color: "#757575"
@@ -301,7 +318,7 @@ Item {
                 activeMapType: supportedMapTypes[8]
                 visible: true
 
-                plugin: mapPlugin
+                plugin: mapInfoPlugin
 
                 center: QtPositioning.coordinate(textInfoLatitude.text, textInfoLongitude.text)
 

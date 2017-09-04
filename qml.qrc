@@ -68,5 +68,15 @@
         <file>images/ic_account_circle_white_48dp.png</file>
         <file>images/ic_exit_to_app_black_48dp.png</file>
         <file>images/ic_description_black_48dp.png</file>
+        <file>TabletMainView.qml</file>
+        <file>PhoneMainView.qml</file>
+        <file>images/euca_background_01.png</file>
+        <file>images/ic_settings_black_48dp.png</file>
+        <file>images/ic_search_black_48dp.png</file>
+        <file>images/ic_assessment_black_48dp.png</file>
+        <file>ItemCard.qml</file>
+        <file>images/ic_dashboard_black_48dp.png</file>
+        <file>images/ic_cloud_done_black_48dp.png</file>
+        <file>images/ic_help_black_48dp.png</file>
     </qresource>
 </RCC>

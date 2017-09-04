@@ -7,9 +7,11 @@ PageDashboardForm {
     signal imageIdRecieved(string imageId, string filename)
     signal serverFileRunning(string status)
 
+    property bool pullDown: false
+
     Component.onCompleted: {
-        fillDashboardModel("*");
-        //applyFilter("Crypto");
+        //fillDashboardModel("*");
+        //fillDateListModel("*");
     }
 
     /*mouseAreaMap.onClicked: {
@@ -22,8 +24,53 @@ PageDashboardForm {
         console.log('Map type -> ' + hereMap.supportedMapTypes[0])
     }*/
 
+    /*dateListView.onContentYChanged: {
+        if(pullDown)
+        {
+            if(dateListView.contentY == 0)
+            {
+                clearSearchBar();
+                pullDown = false;
+            }
+        }
+        else
+        {
+            if(dateListView.contentY < -50)
+            {
+                pullDown = true;
+            }
+        }
+    }*/
+
+    function clearSearchBar()
+    {
+        textFieldSearchDisease.text = "";
+        textFieldSearchDisease.focus = false;
+        textSearchNotFound.visible = false;
+        searchResult = -1;
+        fillDateListModel("*");
+    }
+
     textFieldSearchDisease.onTextChanged: {
-        applyFilter(textFieldSearchDisease.text);
+        //applyFilter(textFieldSearchDisease.text);
+        searchString = textFieldSearchDisease.text;
+        searchResult = fillDateListModel(searchString);
+        if(textFieldSearchDisease.text.length > 0)
+        {
+            if(searchResult > 0)
+            {
+                textSearchNotFound.visible = false;
+            }
+            else
+            {
+                dateListModel.clear();
+                textSearchNotFound.visible = true;
+            }
+        }
+        else
+        {
+            clearSearchBar();
+        }
     }
 
     textFieldSearchDisease.onAccepted: {
@@ -32,7 +79,8 @@ PageDashboardForm {
 
     onImageIdRecieved: {
         myEDDSApi.updateEucaImageId(imageId, filename);
-        fillDashboardModel("*");
+        //fillDashboardModel("*");
+        fillDateListModel("*");
     }
 
     onServerFileRunning: {
@@ -54,6 +102,7 @@ PageDashboardForm {
     controlCenter.cameraButton.onClicked: {
         cameraPreview.visible = true;
         swipeView.interactive = false;
+        controlCenter.visible = false;
         pageDashboard.push(cameraPreviewStack);
     }
 
@@ -74,8 +123,21 @@ PageDashboardForm {
         photoPreview.visible = true;
         photoPreview.source = fileGallery.fileNameFromGallery
         photoPreview.previewCanvas.clear_canvas();
+        controlCenter.visible = false;
         swipeView.interactive = false;
         pageDashboard.push(photoPreviewStack);
+    }
+
+    function getGridModel(type, date)
+    {
+        var object = JSON.parse(myEDDSApi.readEucaImage(type, date));
+        for(var i = 0; i < object.euca_image.length; i++)
+        {
+            console.log("Read euca data -> " + object.euca_image[i].imageId + ":" + object.euca_image[i].diseasetype + " with original filename[" + object.euca_image[i].originalfilename + "]");
+            gridModel.append(object.euca_image[i]);
+        }
+        //console.log("Dashboard list model -> " + dashboardListModel)
+        return gridModel;
     }
 
     function fillDashboardModel(type)
@@ -88,6 +150,25 @@ PageDashboardForm {
             dashboardListModel.append(object.euca_image[i]);
         }
         //console.log("Dashboard list model -> " + dashboardListModel)
+    }
+
+    function fillDateListModel(type)
+    {
+        var object = JSON.parse(myEDDSApi.getDateList(type));
+        if(object.date_list.length > 0)
+        {
+            dateListModel.clear();
+            for(var i = 0; i< object.date_list.length; i++)
+            {
+                console.log("Date List [" + i + "] -> " + object.date_list[i].datetext + " as " + object.date_list[i].date);
+                dateListModel.append(object.date_list[i]);
+            }
+            return object.date_list.length;
+        }
+        else
+        {
+            return 0;
+        }
     }
 
 /*    function reload()

@@ -59,6 +59,7 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     //swipeView.interactive = true;
+                    controlCenter.visible = true;
                     pageDashboard.pop();
                 }
             }
@@ -113,19 +114,7 @@ Item {
                 MouseArea{
                     id: mouseAreaInfo
                     anchors.fill: parent
-                    onClicked: {
-                        var d = new Date(dashboardListView.model.get(imageListIndex).lastedit);
-                        console.log("Select date -> " + d.toLocaleDateString());
-                        info.imageOriginalSource = "file://" + myEDDSApi.getDefaultHomePath() + "/" + dashboardListView.model.get(imageListIndex).originalfilename;
-                        info.imageDiseaseMaskSource = "file://" + myEDDSApi.getDefaultHomePath() + "/" + dashboardListView.model.get(imageListIndex).displayfilename;
-                        console.log("Original image file -> " + info.imageOriginalSource)
-                        info.textDescription.text = dashboardListView.model.get(imageListIndex).diseasetype + " - Stage: " + dashboardListView.model.get(imageListIndex).stage + ", Level: " + dashboardListView.model.get(imageListIndex).level;
-                        info.textLastedit.text = dashboardListView.model.get(imageListIndex).lastedit;
-                        info.textFilename.text = dashboardListView.model.get(imageListIndex).displayfilename;
-                        info.textServerInfo.text = dashboardListView.model.get(imageListIndex).imageId;
-                        info.textElapseTime.text = dashboardListView.model.get(imageListIndex).elapsetime + " s";
-                        info.textInfoLatitude.text = dashboardListView.model.get(imageListIndex).latitude
-                        info.textInfoLongitude.text = dashboardListView.model.get(imageListIndex).longitude
+                    onClicked: {                        
                         info.visible = true;
                         swipeView.interactive = false;
                         pageDashboard.push(info);
@@ -190,6 +179,7 @@ Item {
             myEDDSApi.deleteFile(myEDDSApi.getDefaultHomePath() + "/" + dashboardListView.model.get(imageListIndex).filename);
             myEDDSApi.deleteEucaImage(imageId);
             pageDashboard.fillDashboardModel("*");
+            pageDashboard.fillDateListModel("*");
             messageDialogDeleteFile.close();
             //swipeView.interactive = true;
             pageDashboard.pop();

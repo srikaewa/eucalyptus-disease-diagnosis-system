@@ -1,16 +1,17 @@
 import QtQuick 2.5
 import QtQuick.Controls 2.1
 import QtQuick.Window 2.0
+import QtGraphicalEffects 1.0
 
 import EDDSApi 1.0
 
 Item {
     property alias fileGallery: fileGallery
     property alias cameraButton: cameraButton
-    width: 90
-    height: parent.height
+    width: parent.width
+    height: 70
     anchors{
-        right: parent.right
+        bottom: parent.bottom
     }
 
     EDDSApi{
@@ -23,8 +24,8 @@ Item {
             fill: parent
         }
 
-        color: Qt.rgba(0,0,0,0)
-        Column{
+        color: "white"
+        Row{
             anchors{
                 centerIn: parent
             }
@@ -48,6 +49,15 @@ Item {
             }
 
         }
+    }
+    DropShadow {
+        anchors.fill: controlPanel
+        horizontalOffset: 0
+        verticalOffset: 1
+        radius: 8
+        samples: 17
+        color: "#757575"
+        source: controlPanel
     }
 
 }

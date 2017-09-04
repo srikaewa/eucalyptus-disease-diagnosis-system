@@ -687,7 +687,7 @@ bool EDDSApi::updateEucaImageId(QString imageId, QString filename)
 
 bool EDDSApi::updateDiseaseType(QString imageId, QString diseasetype, QString stage, QString level, QString lastedit, QString elapsetime)
 {
-    qDebug()  << "EDDSApi:: updating disease type of [" + imageId + ": " + diseasetype + "] to database...";
+    qDebug()  << "EDDSApi:: updating disease type of [" + imageId + ": " + diseasetype + "] to database @" + lastedit;
     QSqlQuery qry;
     if(qry.prepare("UPDATE euca_images SET diseasetype = :diseasetype, stage = :stage, level = :level, lastedit = :lastedit, elapsetime = :elapsetime WHERE imageId = :imageId")){
         qry.bindValue(":imageId", imageId);
@@ -742,12 +742,17 @@ bool EDDSApi::updateDiseaseType2Filename(QString filename, QString diseasetype, 
     }
 }
 
+void EDDSApi::setSubmitter(QString submitter){
+    m_submitter = submitter;
+}
+
 QString EDDSApi::readDiseaseType(QString imageId)
 {
     qDebug()  << "EDDSApi:: Reading disease type of " + imageId + " from database...";
     QSqlQuery qry;
-    if(qry.prepare("SELECT diseasetype FROM euca_images WHERE imageId = :imageId")){
+    if(qry.prepare("SELECT diseasetype FROM euca_images WHERE imageId = :imageId AND submitter= :submitter")){
         qry.bindValue(":imageId", imageId);
+        qry.bindValue(":submitter", m_submitter);
         if(qry.exec())
         {
             QString str;
@@ -776,8 +781,9 @@ QString EDDSApi::readEucaImageIdFromFile(QString filename)
 {
     qDebug()  << "EDDSApi:: Reading imageId of " + filename + " from database...";
     QSqlQuery qry;
-    if(qry.prepare("SELECT imageId FROM euca_images WHERE filename = :filename")){
+    if(qry.prepare("SELECT imageId FROM euca_images WHERE filename = :filename AND submitter = :submitter")){
         qry.bindValue(":filename", filename);
+        qry.bindValue(":submitter", m_submitter);
         if(qry.exec())
         {
             QString str;
@@ -812,15 +818,16 @@ QString EDDSApi::readEucaImage(QString type)
     QString qry_expression;
     if(type == "*")
     {
-        qry_expression = "SELECT * FROM euca_images ORDER BY diseasetype ASC, datetime(lastedit) ASC";
+        qry_expression = "SELECT * FROM euca_images WHERE submitter = :submitter ORDER BY diseasetype ASC, datetime(lastedit) DESC";
     }
     else
     {
-        qry_expression = "SELECT * FROM euca_images WHERE diseasetype LIKE :diseasetype || '%' ORDER BY datetime(lastedit) ASC";
+        qry_expression = "SELECT * FROM euca_images WHERE submitter = :submitter AND diseasetype LIKE :diseasetype || '%' ORDER BY datetime(lastedit) DESC";
         qDebug() << "ApplyFilter -> " + qry_expression;
     }
     if(qry.prepare(qry_expression)){
         qry.bindValue(":diseasetype", type);
+        qry.bindValue(":submitter", m_submitter);
         if(qry.exec())
         {
             qDebug() << "EDDSApi:: Select euca data successfully...";
@@ -867,12 +874,143 @@ QString EDDSApi::readEucaImage(QString type)
     }
 }
 
+QString EDDSApi::readEucaImage(QString type, QString fdate)
+{
+    //QVector <QVector <QString>> eucaImage;
+    QJsonObject eucaObject;
+    QJsonObject recordObject;
+    QJsonArray recordsArray;
+    // read data from database file
+    QSqlQuery qry;
+    QString qry_expression;
+    if(type == "*")
+    {
+        qry_expression = "SELECT * FROM euca_images WHERE submitter = :submitter AND date(lastedit)=date(:fdate) ORDER BY datetime(lastedit) DESC";
+    }
+    else
+    {
+        qry_expression = "SELECT * FROM euca_images WHERE submitter = :submitter AND date(lastedit)=date(:fdate) AND diseasetype LIKE '%" + type +"%' ORDER BY datetime(lastedit) DESC";
+        qDebug() << "ApplyFilter ->" + qry_expression;
+    }
+    if(qry.prepare(qry_expression)){
+        //qry.bindValue(":diseasetype", type);
+        qry.bindValue(":fdate", fdate);
+        qry.bindValue(":submitter", m_submitter);
+        if(qry.exec())
+        {
+            qDebug() << "EDDSApi:: Select euca data successfully...";
+            int i=0;
+            while(qry.next())
+            {
+                recordObject.insert("imageId", qry.value(qry.record().indexOf("imageId")).toString());
+                //qDebug() << "imageId: " + eucaTemp.value(0);
+                recordObject.insert("filename", qry.value(qry.record().indexOf("filename")).toString());
+                recordObject.insert("originalfilename", qry.value(qry.record().indexOf("originalfilename")).toString());
+                recordObject.insert("displayfilename", qry.value(qry.record().indexOf("displayfilename")).toString());
+                recordObject.insert("diseasetype", qry.value(qry.record().indexOf("diseasetype")).toString());
+                //qDebug() << "diseasetype: " + eucaTemp.value(2);
+                recordObject.insert("stage", qry.value(qry.record().indexOf("stage")).toString());
+                recordObject.insert("level", qry.value(qry.record().indexOf("level")).toString());
+                recordObject.insert("submitter", qry.value(qry.record().indexOf("submitter")).toString());
+                //qDebug() << "submitter: " + eucaTemp.value(3);
+                recordObject.insert("submit", qry.value(qry.record().indexOf("submit")).toString());
+                //qDebug() << "submit: " + eucaTemp.value(4);
+                recordObject.insert("lastedit", qry.value(qry.record().indexOf("lastedit")).toString());
+                recordObject.insert("latitude", qry.value(qry.record().indexOf("latitude")).toString());
+                recordObject.insert("longitude", qry.value(qry.record().indexOf("longitude")).toString());
+                recordObject.insert("elapsetime", qry.value(qry.record().indexOf("elapsetime")).toString());
+                //qDebug() << "lastedit: " + eucaTemp.value(5);
+                //eucaObject.insert("euca_image", recordObject);
+                recordsArray.push_back(recordObject);
+                i++;
+            }
+            eucaObject.insert("euca_image", recordsArray);
+            QJsonDocument doc(eucaObject);
+            //qDebug() << doc.toJson();
+            return doc.toJson();
+        }
+        else
+        {
+            qDebug() << "EDDSApi:: Select euca data failed!";
+            return "";
+        }
+    }
+    else
+    {
+        qDebug() << "EDDSApi:: Select euca data query broken!";
+        return "";
+    }
+}
+
+QString EDDSApi::getDateList(QString type)
+{
+    QJsonObject dateObject;
+    QJsonObject recordObject;
+    QJsonArray recordsArray;
+    // read data from database file
+    QSqlQuery qry;
+    QString qry_expression;
+    if(type == "*")
+    {
+      qry_expression = "select distinct(date(lastedit)) FROM euca_images WHERE submitter = :submitter ORDER BY datetime(lastedit) DESC";
+    }
+    else
+    {
+      qry_expression = "select distinct(date(lastedit)) FROM euca_images WHERE submitter = :submitter AND diseasetype LIKE '%" + type + "%' ORDER BY datetime(lastedit) DESC";
+    }
+
+    if(qry.prepare(qry_expression)){
+        //qry.bindValue(":diseasetype", type);
+        qry.bindValue(":submitter", m_submitter);
+        if(qry.exec())
+        {
+            qDebug() << "EDDSApi:: Select euca data successfully...";
+            int i=0;
+            while(qry.next())
+            {
+                QString qry_str = qry.value(0).toString();
+                recordObject.insert("date", qry_str);
+                QDate today = QDate::currentDate();
+                QDate im_day = QDate::fromString(qry_str, "yyyy-MM-dd");
+                if(today == im_day)
+                {
+                    recordObject.insert("datetext", "Today");
+                }
+                else
+                {
+                    if(today.addDays(-1) == im_day)
+                        recordObject.insert("datetext", "Yesterday");
+                    else
+                        recordObject.insert("datetext", im_day.toString("dddd, MMMM d, yyyy"));
+                }
+                recordsArray.push_back(recordObject);
+                i++;
+            }
+            dateObject.insert("date_list", recordsArray);
+            QJsonDocument doc(dateObject);
+            qDebug() << doc.toJson();
+            return doc.toJson();
+        }
+        else
+        {
+            qDebug() << "EDDSApi:: Select euca data failed!";
+            return "";
+        }
+    }
+    else
+    {
+        qDebug() << "EDDSApi:: Select euca data query broken!";
+        return "";
+    }
+}
+
 int EDDSApi::countDiseaseType(QString diseaseType)
 {
     qDebug()  << "EDDSApi:: Counting disease type of " + diseaseType + " from database...";
     QSqlQuery qry;
-    if(qry.prepare("SELECT count(*) FROM euca_images WHERE diseasetype = :diseaseType")){
+    if(qry.prepare("SELECT count(*) FROM euca_images WHERE diseasetype = :diseaseType AND submitter = :submitter")){
         qry.bindValue(":diseaseType", diseaseType);
+        qry.bindValue(":submitter", m_submitter);
         if(qry.exec())
         {
             int cnt = 0;
@@ -899,9 +1037,10 @@ QStringList EDDSApi::getDiseaseList()
     m_diseaseList.clear();
     // read data from database file
     QSqlQuery qry;
-    QString qry_expression = "SELECT DISTINCT diseasetype FROM euca_images ORDER BY diseasetype ASC";
+    QString qry_expression = "SELECT DISTINCT diseasetype FROM euca_images WHERE submitter=:submitter ORDER BY datetime(lastedit) ASC";
 
     if(qry.prepare(qry_expression)){
+        qry.bindValue(":submitter", m_submitter);
         if(qry.exec())
         {
             qDebug() << "EDDSApi:: Select euca data successfully...";
@@ -928,6 +1067,7 @@ QStringList EDDSApi::getDiseaseList()
         return m_diseaseList;
     }
 }
+
 
 int EDDSApi::getDiseaseTypeNumber()
 {

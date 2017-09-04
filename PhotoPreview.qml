@@ -321,10 +321,11 @@ Item {
                     onClicked: {
                         //swipeView.interactive = true;
                         pageDashboard.pop();
-                        todayDate = new Date();
-                        var timeNow = Date.now();
+                        todayDate = new Date(new Date().getTime() - new Date().getTimezoneOffset()*60*1000);
+                        console.log("Save image to database @date -> " + todayDate);
+                        var timeNow = todayDate.getTime();
                         filename = eucaFileName+timeNow+".tif";
-                        original_filename = eucaFileName+timeNow+"_original" + myEDDSApi.getFileExtension(preview.source);
+                        original_filename = eucaFileName+timeNow+"_original." + myEDDSApi.getFileExtension(preview.source);
                         display_filename = eucaFileName+timeNow+".jpg";
                         /**** copy file to app home directory and format filename ***/
                         console.log("Submitting file["+filename+"] from original file[" + myEDDSApi.getImageFilePath(preview.source) + "]");
@@ -333,8 +334,10 @@ Item {
                         previewCanvas.clear_canvas();
                         /**** save original file to matched filename ****/
                         myEDDSApi.copyFile(myEDDSApi.getImageFilePath(preview.source), original_filename);
-                        myEDDSApi.saveEucaImage("xxxxxxxxxxxxxxxxxxxxxxxx", myEDDSApi.getImageFileName(filename), myEDDSApi.getImageFileName(original_filename), myEDDSApi.getImageFileName(display_filename) ,"false", 'u', firebaseObject.email, todayDate, todayDate, gpsPosition.position.coordinate.latitude, gpsPosition.position.coordinate.longitude);
-                        pageDashboard.fillDashboardModel("*");
+                        myEDDSApi.saveEucaImage("xxxxxxxxxxxxxxxxxxxxxxxx", myEDDSApi.getImageFileName(filename), myEDDSApi.getImageFileName(original_filename), myEDDSApi.getImageFileName(display_filename) ,"false", 'u', firebaseObject.email, todayDate.toISOString().substr(0,19).replace('T', ' '), todayDate.toISOString().substr(0,19).replace('T', ' '), gpsPosition.position.coordinate.latitude, gpsPosition.position.coordinate.longitude);
+                        //pageDashboard.fillDashboardModel("*");
+                        controlCenter.visible = true;
+                        pageDashboard.fillDateListModel("*");
                     }
                     ToolTip{
                         parent: mouseAreaCheck

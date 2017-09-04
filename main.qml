@@ -14,12 +14,44 @@ ApplicationWindow {
     height: 800
 
     property alias swipeView: swipeView
+
     //property alias titleLabel: titleLabel.text
 
     FontLoader {id: fontRegular; source: "qrc:/fonts/SuperspaceRegular.ttf"}
     FontLoader {id: fontItalic; source: "qrc:/fonts/SuperspaceLight.ttf"}
 
     //color: Qt.rgba(0.9,0.2,0.2,1.0)
+
+    property bool mobileScreen: true
+    property real screenPixelWidth: 0
+    property real screenPixelHeight: 0
+    property real screenInchWidth: 0
+    property real screenInchHeight: 0
+    property real screenDiagonal: 0
+    property int cardWidth: 0
+    property int cardRadius: 2
+    property color cardColor: Qt.rgba(1,1,1,0.45)
+
+    Component.onCompleted: {
+        screenPixelWidth = Screen.width * Screen.devicePixelRatio
+        screenPixelHeight = Screen.height * Screen.devicePixelRatio
+        screenInchWidth = Screen.width / (Screen.pixelDensity * 25.4)
+        screenInchHeight = Screen.height / (Screen.pixelDensity * 25.4)
+        screenDiagonal = Math.sqrt(Math.pow(screenInchWidth,2) + Math.pow(screenInchHeight,2))
+        if (screenDiagonal >= 7)
+        {
+            // tablet
+            mobileScreen = false;
+            cardWidth = Screen.width * 0.45;
+        }
+        else
+        {
+            // phone
+            mobileScreen = true
+            cardWidth = Screen.width * 0.9
+        }
+        console.log("mobileScreen -> " + mobileScreen);
+    }
 
     EDDSApi{
         id: myEDDSApi
@@ -85,6 +117,7 @@ ApplicationWindow {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 60
     }*/
+
 
 /*    footer: TabBar {
         id: tabBar
